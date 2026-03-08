@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: SmartTransNet-Docker-CI
 
 on:
   push:
@@ -23,10 +23,10 @@ jobs:
     - name: Build the Docker image
       run: |
         docker build . --file src/Web.Api/Dockerfile \
-          --tag ${{ secrets.DOCKERHUB_USERNAME }}/web-api:latest \
-          --tag ${{ secrets.DOCKERHUB_USERNAME }}/web-api:${{ github.sha }}
+          --tag ${{ secrets.DOCKERHUB_USERNAME }}/transnet-web-api:latest \
+          --tag ${{ secrets.DOCKERHUB_USERNAME }}/transnet-web-api:${{ github.sha }}
 
     - name: Push the Docker image
       run: |
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/web-api:latest
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/web-api:${{ github.sha }}
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/transnet-web-api:latest
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/transnet-web-api:${{ github.sha }}
