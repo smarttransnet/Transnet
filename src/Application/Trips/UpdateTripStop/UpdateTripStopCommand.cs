@@ -1,0 +1,21 @@
+using Application.Abstractions.Messaging;
+using Domain.Trips.Enums;
+
+namespace Application.Trips.UpdateTripStop;
+
+public sealed record UpdateTripStopCommand(
+    Guid Id,
+    Guid TripId,
+    int StopOrder,
+    StopType StopType,
+    string LocationName,
+    string? Address,
+    double? Latitude,
+    double? Longitude,
+    string? PocName,
+    string? PocPhone,
+    string? PocEmail,
+    DateTime? ScheduledArrivalAt,
+    DateTime? ActualArrivalAt,
+    DateTime? ActualDepartureAt,
+    string? Notes) : ICommand;

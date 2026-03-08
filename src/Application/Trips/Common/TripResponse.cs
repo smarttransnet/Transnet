@@ -1,0 +1,23 @@
+using Domain.Trips.Enums;
+
+namespace Application.Trips.Common;
+
+public sealed record TripResponse(
+    Guid Id,
+    string TripNumber,
+    Guid DriverId,
+    Guid VehicleId,
+    Guid? TrailerId,
+    TripStatus Status,
+    DateTime ScheduledStartAt,
+    DateTime? ActualStartAt,
+    DateTime? ActualEndAt,
+    decimal? TotalDistanceKm,
+    bool IsImported,
+    Guid? ImportBatchId,
+    DateTime? DriverConfirmedAt,
+    DateTime? OfficeApprovedAt,
+    Guid? OfficeApprovedByUserId,
+    DateTime CreatedAt,
+    DateTime UpdatedAt,
+    List<TripStopResponse>? Stops = null);
