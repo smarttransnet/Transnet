@@ -1,6 +1,4 @@
-# Clean Architecture Template
-
-What's included in the template?
+# SmartTransNet Architecture
 
 - SharedKernel project with common Domain-Driven Design abstractions.
 - Domain layer with sample entities.
