@@ -22,7 +22,7 @@ jobs:
 
     - name: Build the Docker image
       run: |
-        docker build . --file Dockerfile \
+        docker build . --file src/Web.Api/Dockerfile \
           --tag ${{ secrets.DOCKERHUB_USERNAME }}/web-api:latest \
           --tag ${{ secrets.DOCKERHUB_USERNAME }}/web-api:${{ github.sha }}
 
