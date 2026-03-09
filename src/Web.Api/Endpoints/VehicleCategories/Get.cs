@@ -14,7 +14,6 @@ internal sealed class Get : IEndpoint
             IQueryHandler<GetVehicleCategoriesQuery, List<VehicleCategoryResponse>> handler,
             CancellationToken cancellationToken) =>
         {
-            System.Diagnostics.Debugger.Break();
             var query = new GetVehicleCategoriesQuery();
 
             Result<List<VehicleCategoryResponse>> result = await handler.Handle(query, cancellationToken);
