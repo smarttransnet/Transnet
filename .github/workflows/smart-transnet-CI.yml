@@ -33,3 +33,11 @@ jobs:
       run: |
         docker push 808765744383.dkr.ecr.ap-southeast-1.amazonaws.com/smarttransnet/transnet-api:latest
         docker push 808765744383.dkr.ecr.ap-southeast-1.amazonaws.com/smarttransnet/transnet-api:${{ github.sha }}
+
+    - name: Deploy to Amazon ECS Fargate
+      run: |
+        aws ecs update-service \
+          --cluster ${{ secrets.ECS_CLUSTER_NAME }} \
+          --service ${{ secrets.ECS_SERVICE_NAME }} \
+          --force-new-deployment \
+          --region ap-southeast-1
