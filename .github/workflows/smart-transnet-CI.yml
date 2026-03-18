@@ -34,11 +34,33 @@ jobs:
         docker push 808765744383.dkr.ecr.ap-southeast-1.amazonaws.com/smarttransnet/transnet-api:latest
         docker push 808765744383.dkr.ecr.ap-southeast-1.amazonaws.com/smarttransnet/transnet-api:${{ github.sha }}
 
+    - name: Update ECS Task Definition with new image
+      run: |
+        TASK_DEF=$(aws ecs describe-task-definition \
+          --task-definition transnet-api \
+          --region ap-southeast-1 \
+          --query "taskDefinition" \
+          --output json)
+
+        NEW_TASK_DEF=$(echo $TASK_DEF | jq \
+          --arg IMAGE "808765744383.dkr.ecr.ap-southeast-1.amazonaws.com/smarttransnet/transnet-api:${{ github.sha }}" \
+          'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)
+          | .containerDefinitions[0].image = $IMAGE')
+
+        NEW_REVISION=$(aws ecs register-task-definition \
+          --region ap-southeast-1 \
+          --cli-input-json "$NEW_TASK_DEF" \
+          --query "taskDefinition.taskDefinitionArn" \
+          --output text)
+
+        echo "NEW_REVISION=$NEW_REVISION" >> $GITHUB_ENV
+
     - name: Deploy to Amazon ECS Fargate
       run: |
         aws ecs update-service \
           --cluster transnet-cluster \
           --service transnet-api-service \
+          --task-definition ${{ env.NEW_REVISION }} \
           --force-new-deployment \
-          --deployment-configuration "minimumHealthyPercent=100,maximumPercent=200" \
+          --deployment-configuration "minimumHealthyPercent=50,maximumPercent=100" \
           --region ap-southeast-1
