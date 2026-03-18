@@ -62,5 +62,5 @@ jobs:
           --service transnet-api-service \
           --task-definition ${{ env.NEW_REVISION }} \
           --force-new-deployment \
-          --deployment-configuration "minimumHealthyPercent=50,maximumPercent=100" \
+          --deployment-configuration "minimumHealthyPercent=50,maximumPercent=200" \
           --region ap-southeast-1
