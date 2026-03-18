@@ -17,9 +17,9 @@ internal sealed class Get : IEndpoint
                 {
                     Id = Guid.NewGuid(),
                     UserId = userId,
-                    Description = "Complete Fargate",
+                    Description = "Complete Complete Complete Fargate",
                     DueDate = DateTime.Now.AddDays(7),
-                    Labels = ["Fargate","Documentation", "Important"],
+                    Labels = ["CI, CD, Fargate","Documentation", "Important"],
                     IsCompleted = false,
                     CreatedAt = DateTime.Now.AddDays(-5),
                     CompletedAt = null
