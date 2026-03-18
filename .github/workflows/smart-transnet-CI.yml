@@ -40,4 +40,5 @@ jobs:
           --cluster transnet-cluster \
           --service transnet-api-service \
           --force-new-deployment \
+          --deployment-configuration "minimumHealthyPercent=100,maximumPercent=200" \
           --region ap-southeast-1
