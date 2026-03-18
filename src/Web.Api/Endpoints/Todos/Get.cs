@@ -19,7 +19,7 @@ internal sealed class Get : IEndpoint
                     UserId = userId,
                     Description = "Complete project documentation",
                     DueDate = DateTime.Now.AddDays(7),
-                    Labels = ["Documentation", "Important"],
+                    Labels = ["Fargate","Documentation", "Important"],
                     IsCompleted = false,
                     CreatedAt = DateTime.Now.AddDays(-5),
                     CompletedAt = null
