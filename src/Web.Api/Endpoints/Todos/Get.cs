@@ -1,4 +1,5 @@
-﻿using Application.Todos.Get;
+﻿using Application.Abstractions.Messaging;
+using Application.Todos.Get;
 using SharedKernel;
 using Web.Api.Extensions;
 using Web.Api.Infrastructure;
@@ -17,9 +18,9 @@ internal sealed class Get : IEndpoint
                 {
                     Id = Guid.NewGuid(),
                     UserId = userId,
-                    Description = "Complete Complete Complete Fargate",
+                    Description = "Complete project documentation",
                     DueDate = DateTime.Now.AddDays(7),
-                    Labels = ["CI, CD, Fargate","Documentation", "Important"],
+                    Labels = ["Documentation", "Important"],
                     IsCompleted = false,
                     CreatedAt = DateTime.Now.AddDays(-5),
                     CompletedAt = null
@@ -49,10 +50,28 @@ internal sealed class Get : IEndpoint
             };
 
             var result = Result<List<TodoResponse>>.Success(mockTodos);
+            //var query = new GetTodosQuery(userId);
+
+            //Result<List<TodoResponse>> result = await handler.Handle(query, cancellationToken);
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .WithTags(Tags.Todos);
         //.RequireAuthorization();
+
+        //        app.MapGet("todos", async (
+        //    Guid userId,
+        //    IQueryHandler<GetTodosQuery, List<TodoResponse>> handler,
+        //    CancellationToken cancellationToken) =>
+        //        {
+        //            var query = new GetTodosQuery(userId);
+
+        //            Result<List<TodoResponse>> result = await handler.Handle(query, cancellationToken);
+
+        //            return result.Match(Results.Ok, CustomResults.Problem);
+        //        })
+        //.WithTags(Tags.Todos)
+        //.RequireAuthorization();
+
     }
 }
