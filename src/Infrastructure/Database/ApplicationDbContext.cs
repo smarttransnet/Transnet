@@ -97,7 +97,74 @@ public sealed class ApplicationDbContext(
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
-        //modelBuilder.HasDefaultSchema(Schemas.Default);
+        modelBuilder.HasDefaultSchema(Schemas.Default);
+
+        // Drivers
+        modelBuilder.Ignore<Driver>();
+        modelBuilder.Ignore<DriverAuthCredential>();
+        modelBuilder.Ignore<DriverAttendanceLog>();
+        modelBuilder.Ignore<DriverExpense>();
+        modelBuilder.Ignore<DriverLocationUpdate>();
+        modelBuilder.Ignore<DriverNotification>();
+        modelBuilder.Ignore<DriverDocument>();
+        modelBuilder.Ignore<DriverGpsLog>();
+        modelBuilder.Ignore<DriverTripAssignment>();
+
+        // Assets
+        modelBuilder.Ignore<Vehicle>();
+        modelBuilder.Ignore<VehicleCategory>();
+        modelBuilder.Ignore<Trailer>();
+        modelBuilder.Ignore<AssetLocation>();
+
+        // Inspections
+        modelBuilder.Ignore<InspectionChecklist>();
+        modelBuilder.Ignore<ChecklistItem>();
+        modelBuilder.Ignore<VehicleInspection>();
+        modelBuilder.Ignore<InspectionResult>();
+        modelBuilder.Ignore<InspectionPhoto>();
+
+        // Work Orders
+        modelBuilder.Ignore<WorkOrder>();
+        modelBuilder.Ignore<WorkOrderItem>();
+        modelBuilder.Ignore<WorkOrderStatusHistory>();
+
+        // Trips
+        modelBuilder.Ignore<Trip>();
+        modelBuilder.Ignore<TripStop>();
+        modelBuilder.Ignore<TripHalt>();
+        modelBuilder.Ignore<TripVoucher>();
+        modelBuilder.Ignore<TripPodUpload>();
+        modelBuilder.Ignore<TripStatusHistory>();
+        modelBuilder.Ignore<ImportBatch>();
+        modelBuilder.Ignore<CustomFieldDefinition>();
+        modelBuilder.Ignore<TripCustomField>();
+
+        // Fuel & Cost
+        modelBuilder.Ignore<WoqoodImportBatch>();
+        modelBuilder.Ignore<WoqoodFuelTransaction>();
+        modelBuilder.Ignore<WoqoodCardMapping>();
+        modelBuilder.Ignore<FuelCostAllocation>();
+        modelBuilder.Ignore<VehicleFuelSummary>();
+        modelBuilder.Ignore<DriverSalaryRecord>();
+        modelBuilder.Ignore<SalaryExpenseLine>();
+        modelBuilder.Ignore<DriverCommissionItem>();
+        modelBuilder.Ignore<MonthlyExpenseReport>();
+        modelBuilder.Ignore<ExpenseReportLineItem>();
+
+        // Billing
+        modelBuilder.Ignore<Client>();
+        modelBuilder.Ignore<ClientPortalUser>();
+        modelBuilder.Ignore<Quotation>();
+        modelBuilder.Ignore<QuotationLineItem>();
+        modelBuilder.Ignore<Invoice>();
+        modelBuilder.Ignore<InvoiceLineItem>();
+        modelBuilder.Ignore<InvoiceTripLink>();
+        modelBuilder.Ignore<InvoicePayment>();
+        modelBuilder.Ignore<InvoiceReportFormat>();
+        modelBuilder.Ignore<ReportFormatColumn>();
+        modelBuilder.Ignore<OutstandingInvoiceReport>();
+        modelBuilder.Ignore<OutstandingInvoiceSnapshot>();
+        modelBuilder.Ignore<InvoiceReminderLog>();
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

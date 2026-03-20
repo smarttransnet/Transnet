@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using SharedKernel;
+using HealthChecks.NpgSql;
 
 namespace Infrastructure;
 
@@ -38,30 +39,18 @@ public static class DependencyInjection
         return services;
     }
 
-    //private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
-    //{
-    //    string? connectionString = configuration.GetConnectionString("Database");
-
-    //    services.AddDbContext<ApplicationDbContext>(
-    //        options => options
-    //            .UseSqlServer(connectionString, npgsqlOptions =>
-    //                npgsqlOptions.MigrationsHistoryTable(HistoryRepository.DefaultTableName, Schemas.Default))
-    //            .UseSnakeCaseNamingConvention());
-
-    //    services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
-
-    //    return services;
-    //}
-
     private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
         string? connectionString = configuration.GetConnectionString("Database");
+
         services.AddDbContext<ApplicationDbContext>(
             options => options
-                .UseSqlServer(connectionString, sqlOptions =>
-                    sqlOptions.MigrationsHistoryTable(HistoryRepository.DefaultTableName))
+                .UseNpgsql(connectionString, npgsqlOptions =>
+                    npgsqlOptions.MigrationsHistoryTable(HistoryRepository.DefaultTableName, Schemas.Default))
                 .UseSnakeCaseNamingConvention());
+
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
+
         return services;
     }
 
@@ -69,7 +58,7 @@ public static class DependencyInjection
     {
         services
             .AddHealthChecks()
-            .AddSqlServer(configuration.GetConnectionString("Database")!);
+            .AddNpgSql(configuration.GetConnectionString("Database")!);
 
         return services;
     }

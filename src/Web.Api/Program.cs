@@ -11,18 +11,18 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
 
+builder.Services.AddSwaggerGenWithAuth();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5174")
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+              .AllowAnyMethod();
     });
 });
 
-builder.Services.AddSwaggerGenWithAuth();
 
 builder.Services
     .AddApplication()
@@ -34,7 +34,6 @@ builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 WebApplication app = builder.Build();
 
 app.UseCors("AllowFrontend");
-
 app.MapEndpoints();
 
 if (app.Environment.IsDevelopment())
