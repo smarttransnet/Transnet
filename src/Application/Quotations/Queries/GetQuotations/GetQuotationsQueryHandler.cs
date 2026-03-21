@@ -28,8 +28,9 @@ internal sealed class GetQuotationsQueryHandler(
             query = query.Where(q => q.QuotationNumber.Contains(request.SearchTerm));
         }
 
-        List<QuotationResponse> quotations = await query
+        IReadOnlyList<QuotationResponse> quotations = await query
             .OrderByDescending(q => q.IssuedAt)
+            .Include(q => q.Client)
             .Select(q => new QuotationResponse(
                 q.Id,
                 q.QuotationNumber,
@@ -42,6 +43,6 @@ internal sealed class GetQuotationsQueryHandler(
             ))
             .ToListAsync(cancellationToken);
 
-        return quotations;
+        return Result.Success(quotations);
     }
 }

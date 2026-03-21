@@ -1,4 +1,4 @@
-namespace Application.Fuel.Woqood.Queries.GetWoqoodCardMappings;
+namespace Application.Fuel.Woqood;
 
 public sealed record WoqoodCardMappingResponse(
     Guid Id,
@@ -7,5 +7,4 @@ public sealed record WoqoodCardMappingResponse(
     Guid? DriverId,
     string CardHolderName,
     bool IsActive,
-    string? Notes
-);
+    string? Notes);

@@ -1,23 +1,24 @@
 using Application.Abstractions.Messaging;
 using Application.InspectionChecklists;
-using Application.InspectionChecklists.GetInspectionChecklists;
+using Application.InspectionChecklists.GetInspectionChecklistById;
 using SharedKernel;
 using Web.Api.Extensions;
 using Web.Api.Infrastructure;
 
 namespace Web.Api.Endpoints.InspectionChecklists;
 
-internal sealed class Get : IEndpoint
+internal sealed class GetById : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("inspection-checklists", async (
-            IQueryHandler<GetInspectionChecklistsQuery, IReadOnlyList<InspectionChecklistResponse>> handler,
+        app.MapGet("inspection-checklists/{id:guid}", async (
+            Guid id,
+            IQueryHandler<GetInspectionChecklistByIdQuery, InspectionChecklistResponse> handler,
             CancellationToken cancellationToken) =>
         {
-            var query = new GetInspectionChecklistsQuery();
+            var query = new GetInspectionChecklistByIdQuery(id);
 
-            var result = await handler.Handle(query, cancellationToken);
+            Result<InspectionChecklistResponse> result = await handler.Handle(query, cancellationToken);
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })
