@@ -28,8 +28,9 @@ internal sealed class GetInvoicesQueryHandler(
             query = query.Where(i => i.InvoiceNumber.Contains(request.SearchTerm));
         }
 
-        List<InvoiceResponse> invoices = await query
+        IReadOnlyList<InvoiceResponse> invoices = await query
             .OrderByDescending(i => i.IssuedAt)
+            .Include(i => i.Client)
             .Select(i => new InvoiceResponse(
                 i.Id,
                 i.InvoiceNumber,
@@ -44,6 +45,6 @@ internal sealed class GetInvoicesQueryHandler(
             ))
             .ToListAsync(cancellationToken);
 
-        return invoices;
+        return Result.Success(invoices);
     }
 }

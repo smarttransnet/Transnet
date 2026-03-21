@@ -15,12 +15,12 @@ internal sealed class GetAll : IEndpoint
         app.MapGet("drivers/{driverId:guid}/assignments", async (
             Guid driverId,
             [FromQuery] AssignmentStatus? status,
-            [FromQuery] int page,
-            [FromQuery] int pageSize,
+            [FromQuery] int? page,
+            [FromQuery] int? pageSize,
             IQueryHandler<GetAssignmentsQuery, PagedList<AssignmentResponse>> handler,
             CancellationToken cancellationToken) =>
         {
-            var query = new GetAssignmentsQuery(driverId, status, page, pageSize);
+            var query = new GetAssignmentsQuery(driverId, status, page ?? 1, pageSize ?? 10);
             Result<PagedList<AssignmentResponse>> result = await handler.Handle(query, cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
         })

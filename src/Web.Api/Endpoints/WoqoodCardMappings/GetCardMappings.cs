@@ -1,4 +1,5 @@
 using Application.Abstractions.Messaging;
+using Application.Fuel.Woqood;
 using Application.Fuel.Woqood.Queries.GetWoqoodCardMappings;
 using SharedKernel;
 using Web.Api.Extensions;

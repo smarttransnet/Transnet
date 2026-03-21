@@ -1,4 +1,4 @@
-﻿namespace Web.Api.Endpoints;
+namespace Web.Api.Endpoints;
 
 public static class Tags
 {
@@ -37,4 +37,7 @@ public static class Tags
     public const string DriverLocation = "DriverLocation";
     public const string DriverDocuments = "DriverDocuments";
     public const string DriverNotifications = "DriverNotifications";
+
+    public const string Clients = "Clients";
+    public const string ClientBilling = "ClientBilling";
 }

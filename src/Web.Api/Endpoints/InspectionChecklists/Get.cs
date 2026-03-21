@@ -1,4 +1,5 @@
 using Application.Abstractions.Messaging;
+using Application.InspectionChecklists;
 using Application.InspectionChecklists.GetInspectionChecklists;
 using SharedKernel;
 using Web.Api.Extensions;
@@ -11,12 +12,12 @@ internal sealed class Get : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet("inspection-checklists", async (
-            IQueryHandler<GetInspectionChecklistsQuery, List<InspectionChecklistResponse>> handler,
+            IQueryHandler<GetInspectionChecklistsQuery, IReadOnlyList<InspectionChecklistResponse>> handler,
             CancellationToken cancellationToken) =>
         {
             var query = new GetInspectionChecklistsQuery();
 
-            Result<List<InspectionChecklistResponse>> result = await handler.Handle(query, cancellationToken);
+            var result = await handler.Handle(query, cancellationToken);
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })

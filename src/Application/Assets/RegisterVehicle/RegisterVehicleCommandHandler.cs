@@ -1,6 +1,7 @@
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Domain.Assets;
+using Microsoft.EntityFrameworkCore;
 using SharedKernel;
 
 namespace Application.Assets.RegisterVehicle;
@@ -12,6 +13,11 @@ internal sealed class RegisterVehicleCommandHandler(
 {
     public async Task<Result<Guid>> Handle(RegisterVehicleCommand request, CancellationToken cancellationToken)
     {
+        if (!await dbContext.VehicleCategories.AnyAsync(c => c.Id == request.VehicleCategoryId, cancellationToken))
+        {
+            return Result.Failure<Guid>(Error.NotFound("VehicleCategories.NotFound", $"The vehicle category with the Id = '{request.VehicleCategoryId}' was not found"));
+        }
+
         var vehicle = new Vehicle
         {
             Id = Guid.NewGuid(),

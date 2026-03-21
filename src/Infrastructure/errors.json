@@ -1,0 +1,263 @@
+{
+  "$schema": "http://json.schemastore.org/sarif-1.0.0",
+  "version": "1.0.0",
+  "runs": [
+    {
+      "tool": {
+        "name": "Microsoft (R) Visual C# Compiler",
+        "version": "5.3.0.0",
+        "fileVersion": "5.3.0-2.26153.122 (4d3023de605a78ba3e59e50c657eed70f125c68a)",
+        "semanticVersion": "5.3.0",
+        "language": "en-US"
+      },
+      "results": [
+        {
+          "ruleId": "IDE0161",
+          "level": "error",
+          "message": "Convert to file-scoped namespace",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/BT/Transnet/src/Infrastructure/Database/Migrations/20260321180841_EnableAllEntities.cs",
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 11,
+                  "endLine": 6,
+                  "endColumn": 45
+                }
+              }
+            }
+          ],
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "uri": "file:///C:/BT/Transnet/src/Infrastructure/Database/Migrations/20260321180841_EnableAllEntities.cs",
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 1,
+                  "endLine": 2172,
+                  "endColumn": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CA1861",
+          "level": "error",
+          "message": "Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/BT/Transnet/src/Infrastructure/Database/Migrations/20260321180841_EnableAllEntities.cs",
+                "region": {
+                  "startLine": 1521,
+                  "startColumn": 26,
+                  "endLine": 1521,
+                  "endColumn": 66
+                }
+              }
+            }
+          ],
+          "properties": {
+            "customProperties": {
+              "paramName": "columns"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1861",
+          "level": "error",
+          "message": "Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/BT/Transnet/src/Infrastructure/Database/Migrations/20260321180841_EnableAllEntities.cs",
+                "region": {
+                  "startLine": 1582,
+                  "startColumn": 26,
+                  "endLine": 1582,
+                  "endColumn": 62
+                }
+              }
+            }
+          ],
+          "properties": {
+            "customProperties": {
+              "paramName": "columns"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1861",
+          "level": "error",
+          "message": "Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/BT/Transnet/src/Infrastructure/Database/Migrations/20260321180841_EnableAllEntities.cs",
+                "region": {
+                  "startLine": 1594,
+                  "startColumn": 26,
+                  "endLine": 1594,
+                  "endColumn": 78
+                }
+              }
+            }
+          ],
+          "properties": {
+            "customProperties": {
+              "paramName": "columns"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1861",
+          "level": "error",
+          "message": "Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/BT/Transnet/src/Infrastructure/Database/Migrations/20260321180841_EnableAllEntities.cs",
+                "region": {
+                  "startLine": 1758,
+                  "startColumn": 26,
+                  "endLine": 1758,
+                  "endColumn": 59
+                }
+              }
+            }
+          ],
+          "properties": {
+            "customProperties": {
+              "paramName": "columns"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1861",
+          "level": "error",
+          "message": "Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/BT/Transnet/src/Infrastructure/Database/Migrations/20260321180841_EnableAllEntities.cs",
+                "region": {
+                  "startLine": 1771,
+                  "startColumn": 26,
+                  "endLine": 1771,
+                  "endColumn": 80
+                }
+              }
+            }
+          ],
+          "properties": {
+            "customProperties": {
+              "paramName": "columns"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1861",
+          "level": "error",
+          "message": "Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/BT/Transnet/src/Infrastructure/Database/Migrations/20260321180841_EnableAllEntities.cs",
+                "region": {
+                  "startLine": 1784,
+                  "startColumn": 26,
+                  "endLine": 1784,
+                  "endColumn": 65
+                }
+              }
+            }
+          ],
+          "properties": {
+            "customProperties": {
+              "paramName": "columns"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1861",
+          "level": "error",
+          "message": "Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/BT/Transnet/src/Infrastructure/Database/Migrations/20260321180841_EnableAllEntities.cs",
+                "region": {
+                  "startLine": 1827,
+                  "startColumn": 26,
+                  "endLine": 1827,
+                  "endColumn": 76
+                }
+              }
+            }
+          ],
+          "properties": {
+            "customProperties": {
+              "paramName": "columns"
+            }
+          }
+        },
+        {
+          "ruleId": "CA1861",
+          "level": "error",
+          "message": "Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/BT/Transnet/src/Infrastructure/Database/Migrations/20260321180841_EnableAllEntities.cs",
+                "region": {
+                  "startLine": 1907,
+                  "startColumn": 26,
+                  "endLine": 1907,
+                  "endColumn": 79
+                }
+              }
+            }
+          ],
+          "properties": {
+            "customProperties": {
+              "paramName": "columns"
+            }
+          }
+        }
+      ],
+      "rules": {
+        "CA1861": {
+          "id": "CA1861",
+          "shortDescription": "Avoid constant arrays as arguments",
+          "fullDescription": "Constant arrays passed as arguments are not reused when called repeatedly, which implies a new array is created each time. Consider extracting them to 'static readonly' fields to improve performance if the passed array is not mutated within the called method.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1861",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "IDE0161": {
+          "id": "IDE0161",
+          "shortDescription": "Convert to file-scoped namespace",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0161",
+          "properties": {
+            "category": "Style",
+            "isEnabledByDefault": true,
+            "tags": [
+              "Telemetry",
+              "EnforceOnBuild_HighlyRecommended"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

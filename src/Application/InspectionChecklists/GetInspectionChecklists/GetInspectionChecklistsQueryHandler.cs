@@ -1,16 +1,17 @@
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.InspectionChecklists;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
 
 namespace Application.InspectionChecklists.GetInspectionChecklists;
 
 internal sealed class GetInspectionChecklistsQueryHandler(IApplicationDbContext dbContext)
-    : IQueryHandler<GetInspectionChecklistsQuery, List<InspectionChecklistResponse>>
+    : IQueryHandler<GetInspectionChecklistsQuery, IReadOnlyList<InspectionChecklistResponse>>
 {
-    public async Task<Result<List<InspectionChecklistResponse>>> Handle(GetInspectionChecklistsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<IReadOnlyList<InspectionChecklistResponse>>> Handle(GetInspectionChecklistsQuery request, CancellationToken cancellationToken)
     {
-        List<InspectionChecklistResponse> checklists = await dbContext.InspectionChecklists
+        IReadOnlyList<InspectionChecklistResponse> checklists = await dbContext.InspectionChecklists
             .AsNoTracking()
             .Include(c => c.Items)
             .Select(c => new InspectionChecklistResponse(
@@ -27,6 +28,6 @@ internal sealed class GetInspectionChecklistsQueryHandler(IApplicationDbContext 
                     i.SortOrder)).ToList()))
             .ToListAsync(cancellationToken);
 
-        return checklists;
+        return Result.Success(checklists);
     }
 }

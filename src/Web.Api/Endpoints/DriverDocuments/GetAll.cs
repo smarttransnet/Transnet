@@ -16,12 +16,12 @@ internal sealed class GetAll : IEndpoint
             Guid driverId,
             [FromQuery] Guid? tripId,
             [FromQuery] DriverDocumentType? type,
-            [FromQuery] int page,
-            [FromQuery] int pageSize,
+            [FromQuery] int? page,
+            [FromQuery] int? pageSize,
             IQueryHandler<GetDocumentsQuery, PagedList<DocumentResponse>> handler,
             CancellationToken cancellationToken) =>
         {
-            var query = new GetDocumentsQuery(driverId, tripId, type, page, pageSize);
+            var query = new GetDocumentsQuery(driverId, tripId, type, page ?? 1, pageSize ?? 10);
             Result<PagedList<DocumentResponse>> result = await handler.Handle(query, cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
         })

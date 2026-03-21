@@ -1,4 +1,5 @@
 using Application.Abstractions.Messaging;
+using Application.VehicleCategories;
 using Application.VehicleCategories.GetVehicleCategories;
 using SharedKernel;
 using Web.Api.Extensions;
@@ -11,13 +12,12 @@ internal sealed class Get : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet("vehicle-categories", async (
-            IQueryHandler<GetVehicleCategoriesQuery, List<VehicleCategoryResponse>> handler,
+            IQueryHandler<GetVehicleCategoriesQuery, IReadOnlyList<VehicleCategoryResponse>> handler,
             CancellationToken cancellationToken) =>
         {
-            System.Diagnostics.Debugger.Break();
             var query = new GetVehicleCategoriesQuery();
 
-            Result<List<VehicleCategoryResponse>> result = await handler.Handle(query, cancellationToken);
+            var result = await handler.Handle(query, cancellationToken);
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })
