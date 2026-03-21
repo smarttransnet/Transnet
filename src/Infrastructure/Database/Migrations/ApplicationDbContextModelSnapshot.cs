@@ -19,10 +19,238 @@ namespace Infrastructure.Database.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("public")
-                .HasAnnotation("ProductVersion", "8.0.7")
+                .HasAnnotation("ProductVersion", "10.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Domain.Assets.AssetLocation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AssetId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("asset_id");
+
+                    b.Property<int>("AssetType")
+                        .HasColumnType("integer")
+                        .HasColumnName("asset_type");
+
+                    b.Property<bool>("IsAssigned")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_assigned");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("latitude");
+
+                    b.Property<string>("LocationName")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("location_name");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("longitude");
+
+                    b.Property<DateTime>("RecordedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("recorded_at");
+
+                    b.Property<int>("Source")
+                        .HasColumnType("integer")
+                        .HasColumnName("source");
+
+                    b.HasKey("Id")
+                        .HasName("pk_asset_locations");
+
+                    b.ToTable("asset_locations", "public");
+                });
+
+            modelBuilder.Entity("Domain.Assets.Trailer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("AttachedVehicleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("attached_vehicle_id");
+
+                    b.Property<decimal>("Capacity")
+                        .HasColumnType("numeric")
+                        .HasColumnName("capacity");
+
+                    b.Property<string>("CapacityUnit")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("capacity_unit");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CurrentLocationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("current_location_id");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<decimal>("TotalExpensesQAR")
+                        .HasColumnType("numeric")
+                        .HasColumnName("total_expenses_qar");
+
+                    b.Property<decimal>("TotalRevenueQAR")
+                        .HasColumnType("numeric")
+                        .HasColumnName("total_revenue_qar");
+
+                    b.Property<string>("TrailerNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("trailer_number");
+
+                    b.Property<string>("TrailerType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("trailer_type");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_trailers");
+
+                    b.HasIndex("AttachedVehicleId")
+                        .HasDatabaseName("ix_trailers_attached_vehicle_id");
+
+                    b.ToTable("trailers", "public");
+                });
+
+            modelBuilder.Entity("Domain.Assets.Vehicle", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CurrentDriverId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("current_driver_id");
+
+                    b.Property<Guid?>("CurrentLocationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("current_location_id");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Make")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("make");
+
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("model");
+
+                    b.Property<decimal>("OdometerReading")
+                        .HasColumnType("numeric")
+                        .HasColumnName("odometer_reading");
+
+                    b.Property<string>("PlateNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("plate_number");
+
+                    b.Property<string>("RegistrationNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("registration_number");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid>("VehicleCategoryId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("vehicle_category_id");
+
+                    b.Property<int>("VehicleType")
+                        .HasColumnType("integer")
+                        .HasColumnName("vehicle_type");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("integer")
+                        .HasColumnName("year");
+
+                    b.HasKey("Id")
+                        .HasName("pk_vehicles");
+
+                    b.HasIndex("VehicleCategoryId")
+                        .HasDatabaseName("ix_vehicles_vehicle_category_id");
+
+                    b.ToTable("vehicles", "public");
+                });
+
+            modelBuilder.Entity("Domain.Assets.VehicleCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_vehicle_categories");
+
+                    b.ToTable("vehicle_categories", "public");
+                });
 
             modelBuilder.Entity("Domain.Todos.TodoItem", b =>
                 {
@@ -52,7 +280,7 @@ namespace Infrastructure.Database.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_completed");
 
-                    b.Property<List<string>>("Labels")
+                    b.PrimitiveCollection<List<string>>("Labels")
                         .IsRequired()
                         .HasColumnType("text[]")
                         .HasColumnName("labels");
@@ -111,6 +339,29 @@ namespace Infrastructure.Database.Migrations
                     b.ToTable("users", "public");
                 });
 
+            modelBuilder.Entity("Domain.Assets.Trailer", b =>
+                {
+                    b.HasOne("Domain.Assets.Vehicle", "AttachedVehicle")
+                        .WithMany()
+                        .HasForeignKey("AttachedVehicleId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_trailers_vehicles_attached_vehicle_id");
+
+                    b.Navigation("AttachedVehicle");
+                });
+
+            modelBuilder.Entity("Domain.Assets.Vehicle", b =>
+                {
+                    b.HasOne("Domain.Assets.VehicleCategory", "Category")
+                        .WithMany("Vehicles")
+                        .HasForeignKey("VehicleCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_vehicles_vehicle_categories_vehicle_category_id");
+
+                    b.Navigation("Category");
+                });
+
             modelBuilder.Entity("Domain.Todos.TodoItem", b =>
                 {
                     b.HasOne("Domain.Users.User", null)
@@ -119,6 +370,11 @@ namespace Infrastructure.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_todo_items_users_user_id");
+                });
+
+            modelBuilder.Entity("Domain.Assets.VehicleCategory", b =>
+                {
+                    b.Navigation("Vehicles");
                 });
 #pragma warning restore 612, 618
         }

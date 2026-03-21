@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.Data;
+using Application.Abstractions.Data;
 using Domain.Assets;
 using Domain.Drivers;
 using Domain.Inspections;
@@ -111,10 +111,6 @@ public sealed class ApplicationDbContext(
         modelBuilder.Ignore<DriverTripAssignment>();
 
         // Assets
-        modelBuilder.Ignore<Vehicle>();
-        modelBuilder.Ignore<VehicleCategory>();
-        modelBuilder.Ignore<Trailer>();
-        modelBuilder.Ignore<AssetLocation>();
 
         // Inspections
         modelBuilder.Ignore<InspectionChecklist>();
