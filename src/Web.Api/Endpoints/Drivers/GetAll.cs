@@ -17,12 +17,12 @@ internal sealed class GetAll : IEndpoint
             [FromQuery] string? searchTerm,
             [FromQuery] DriverStatus? status,
             [FromQuery] bool? isActive,
-            [FromQuery] int page,
-            [FromQuery] int pageSize,
+            [FromQuery] int? page,
+            [FromQuery] int? pageSize,
             IQueryHandler<GetDriversQuery, PagedList<DriverResponse>> handler,
             CancellationToken cancellationToken) =>
         {
-            var query = new GetDriversQuery(searchTerm, status, isActive, page, pageSize);
+            var query = new GetDriversQuery(searchTerm, status, isActive, page ?? 1, pageSize ?? 10);
             Result<PagedList<DriverResponse>> result = await handler.Handle(query, cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
         })

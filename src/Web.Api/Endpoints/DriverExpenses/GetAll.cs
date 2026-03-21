@@ -18,12 +18,12 @@ internal sealed class GetAll : IEndpoint
             [FromQuery] ExpenseStatus? status,
             [FromQuery] DateOnly? startDate,
             [FromQuery] DateOnly? endDate,
-            [FromQuery] int page,
-            [FromQuery] int pageSize,
+            [FromQuery] int? page,
+            [FromQuery] int? pageSize,
             IQueryHandler<GetExpensesQuery, PagedList<ExpenseResponse>> handler,
             CancellationToken cancellationToken) =>
         {
-            var query = new GetExpensesQuery(driverId, tripId, status, startDate, endDate, page, pageSize);
+            var query = new GetExpensesQuery(driverId, tripId, status, startDate, endDate, page ?? 1, pageSize ?? 10);
             Result<PagedList<ExpenseResponse>> result = await handler.Handle(query, cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
         })

@@ -13,13 +13,13 @@ internal sealed class GetAll : IEndpoint
     {
         app.MapGet("drivers/{driverId:guid}/notifications", async (
             Guid driverId,
-            [FromQuery] bool unreadOnly,
-            [FromQuery] int page,
-            [FromQuery] int pageSize,
+            [FromQuery] bool? unreadOnly,
+            [FromQuery] int? page,
+            [FromQuery] int? pageSize,
             IQueryHandler<GetNotificationsQuery, PagedList<NotificationResponse>> handler,
             CancellationToken cancellationToken) =>
         {
-            var query = new GetNotificationsQuery(driverId, unreadOnly, page, pageSize);
+            var query = new GetNotificationsQuery(driverId, unreadOnly ?? false, page ?? 1, pageSize ?? 10);
             Result<PagedList<NotificationResponse>> result = await handler.Handle(query, cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
         })
