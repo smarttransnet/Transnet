@@ -1,0 +1,29 @@
+using Application.Abstractions.Messaging;
+using Application.WorkOrders.UpdateWorkOrder;
+using SharedKernel;
+using Web.Api.Extensions;
+using Web.Api.Infrastructure;
+
+namespace Web.Api.Endpoints.WorkOrders;
+
+internal sealed class Update : IEndpoint
+{
+    public void MapEndpoint(IEndpointRouteBuilder app)
+    {
+        app.MapPut("work-orders/{id}", async (
+            Guid id,
+            UpdateWorkOrderCommand request,
+            ICommandHandler<UpdateWorkOrderCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            if (id != request.Id)
+            {
+                return Results.BadRequest("ID mismatch");
+            }
+            Result result = await handler.Handle(request, cancellationToken);
+
+            return result.Match(Results.NoContent, CustomResults.Problem);
+        })
+        .WithTags(Tags.WorkOrders);
+    }
+}

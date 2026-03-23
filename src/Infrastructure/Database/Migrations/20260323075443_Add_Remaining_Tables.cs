@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -1712,7 +1712,7 @@ namespace Infrastructure.Database.Migrations
                 table: "drivers",
                 column: "email",
                 unique: true,
-                filter: "[email] IS NOT NULL");
+                filter: "email IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "ix_drivers_employee_number",
