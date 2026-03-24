@@ -23,9 +23,9 @@ internal sealed class DriverConfiguration : IEntityTypeConfiguration<Driver>
         builder.Property(d => d.Email).HasMaxLength(255);
         if (builder.Metadata.FindProperty("Email") != null)
         {
-             // Make email unique if provided, EF core handles sparse unique indexes via HasFilter
-             builder.HasIndex(d => d.Email).IsUnique().HasFilter("[email] IS NOT NULL");
-        }
+              // Make email unique if provided, EF core handles sparse unique indexes via HasFilter
+              builder.HasIndex(d => d.Email).IsUnique().HasFilter("email IS NOT NULL");
+         }
 
         builder.Property(d => d.LicenceNumber).IsRequired().HasMaxLength(100);
         builder.Property(d => d.LicenceExpiryDate).IsRequired();
