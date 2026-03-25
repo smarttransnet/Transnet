@@ -10,7 +10,7 @@ internal sealed class InspectionPhotoConfiguration : IEntityTypeConfiguration<In
     {
         builder.HasKey(p => p.Id);
         
-        builder.Property(p => p.PhotoUrl).IsRequired().HasMaxLength(500);
+        builder.Property(p => p.PhotoPath).IsRequired().HasMaxLength(500);
         builder.Property(p => p.Caption).HasMaxLength(200);
 
         builder.Property(p => p.UploadedAt).HasConversion(d => DateTime.SpecifyKind(d, DateTimeKind.Utc), v => v);
