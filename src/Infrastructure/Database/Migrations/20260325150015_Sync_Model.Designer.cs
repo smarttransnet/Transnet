@@ -4,17 +4,20 @@ using System.Collections.Generic;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Infrastructure.Database.Migrations;
-
+namespace Infrastructure.Database.Migrations
+{
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260325150015_Sync_Model")]
+    partial class Sync_Model
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2089,15 +2092,15 @@ namespace Infrastructure.Database.Migrations;
                         .HasColumnType("character varying(200)")
                         .HasColumnName("caption");
 
-                    b.Property<string>("PhotoPath")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("photo_path");
-
                     b.Property<int>("PhotoType")
                         .HasColumnType("integer")
                         .HasColumnName("photo_type");
+
+                    b.Property<string>("PhotoUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("photo_url");
 
                     b.Property<DateTime>("UploadedAt")
                         .HasColumnType("timestamp with time zone")
@@ -4106,4 +4109,4 @@ namespace Infrastructure.Database.Migrations;
 #pragma warning restore 612, 618
         }
     }
-
+}
