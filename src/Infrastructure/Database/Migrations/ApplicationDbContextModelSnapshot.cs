@@ -9,8 +9,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Infrastructure.Database.Migrations
-{
+namespace Infrastructure.Database.Migrations;
+
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
@@ -4106,4 +4106,4 @@ namespace Infrastructure.Database.Migrations
 #pragma warning restore 612, 618
         }
     }
-}
+

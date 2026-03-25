@@ -2,8 +2,8 @@
 
 #nullable disable
 
-namespace Infrastructure.Database.Migrations
-{
+namespace Infrastructure.Database.Migrations;
+
     /// <inheritdoc />
     public partial class Sync_Model : Migration
     {
@@ -41,4 +41,4 @@ namespace Infrastructure.Database.Migrations
                 filter: "[email] IS NOT NULL");
         }
     }
-}
+
