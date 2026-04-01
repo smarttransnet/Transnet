@@ -14,6 +14,7 @@ internal sealed class CreateInspectionChecklistCommandHandler(IApplicationDbCont
         {
             Id = Guid.NewGuid(),
             Name = request.Name,
+            VehicleCategoryId = request.VehicleCategoryId,
             InspectionType = request.InspectionType,
             ApplicableVehicleTypes = request.ApplicableVehicleTypes,
             IsActive = true,

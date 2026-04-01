@@ -12,7 +12,7 @@ internal sealed class Create : IEndpoint
         string EmployeeNumber,
         string FirstName,
         string LastName,
-        string PhoneNumber,
+        string? PhoneNumber,
         string LicenceNumber,
         DateOnly LicenceExpiryDate,
         string NationalityCode,
@@ -35,7 +35,8 @@ internal sealed class Create : IEndpoint
                 request.LicenceExpiryDate,
                 request.NationalityCode,
                 request.Email,
-                request.SponsorName);
+                request.SponsorName,
+                Domain.Drivers.Enums.DriverStatus.Active);
 
             Result<Guid> result = await handler.Handle(command, cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);

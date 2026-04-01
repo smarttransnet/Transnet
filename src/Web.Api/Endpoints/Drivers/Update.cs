@@ -12,7 +12,7 @@ internal sealed class Update : IEndpoint
         string EmployeeNumber,
         string FirstName,
         string LastName,
-        string PhoneNumber,
+        string? PhoneNumber,
         string LicenceNumber,
         DateOnly LicenceExpiryDate,
         string NationalityCode,

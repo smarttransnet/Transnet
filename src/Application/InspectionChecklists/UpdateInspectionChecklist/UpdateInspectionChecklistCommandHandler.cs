@@ -21,6 +21,7 @@ internal sealed class UpdateInspectionChecklistCommandHandler(IApplicationDbCont
         }
 
         checklist.Name = request.Name;
+        checklist.VehicleCategoryId = request.VehicleCategoryId;
         checklist.InspectionType = request.InspectionType;
         checklist.ApplicableVehicleTypes = request.ApplicableVehicleTypes;
         checklist.IsActive = request.IsActive;

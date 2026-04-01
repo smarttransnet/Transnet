@@ -1,27 +1,30 @@
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
-using Domain.Drivers;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
 
 namespace Application.Drivers.DeleteDriver;
 
-internal sealed class DeleteDriverCommandHandler(IApplicationDbContext dbContext)
+internal sealed class DeleteDriverCommandHandler(IApplicationDbContext context)
     : ICommandHandler<DeleteDriverCommand>
 {
     public async Task<Result> Handle(DeleteDriverCommand request, CancellationToken cancellationToken)
     {
-        Driver? driver = await dbContext.Drivers
+        var driver = await context.Drivers
             .FirstOrDefaultAsync(d => d.Id == request.Id, cancellationToken);
 
         if (driver is null)
         {
-            return Result.Failure(Error.NotFound("Driver.NotFound", "The driver was not found."));
+            return Result.Failure(Error.NotFound(
+                "Driver.NotFound",
+                $"The driver with the ID '{request.Id}' was not found."));
         }
 
-        dbContext.Drivers.Remove(driver);
+        // Soft delete logic as requested by user
+        driver.IsActive = false;
+        driver.UpdatedAt = DateTime.UtcNow;
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
