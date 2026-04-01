@@ -11,6 +11,7 @@ public sealed record ChecklistItemCommand(
 
 public sealed record CreateInspectionChecklistCommand(
     string Name,
+    Guid? VehicleCategoryId,
     InspectionType InspectionType,
     string ApplicableVehicleTypes,
     List<ChecklistItemCommand> Items) : ICommand<Guid>;

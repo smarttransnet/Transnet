@@ -13,6 +13,7 @@ public sealed record UpdateChecklistItemCommand(
 public sealed record UpdateInspectionChecklistCommand(
     Guid Id,
     string Name,
+    Guid? VehicleCategoryId,
     InspectionType InspectionType,
     string ApplicableVehicleTypes,
     bool IsActive,
