@@ -17,11 +17,11 @@ internal sealed class PortalUsers : IEndpoint
         app.MapGet("clients/{id}/portal-users", async (
             Guid id,
             bool? isActive,
-            ISender sender,
+            IQueryHandler<GetPortalUsersQuery, IReadOnlyList<ClientPortalUserResponse>> handler,
             CancellationToken cancellationToken) =>
         {
             var query = new GetPortalUsersQuery(id, isActive);
-            Result<IReadOnlyList<ClientPortalUserResponse>> result = await sender.Send(query, cancellationToken);
+            Result<IReadOnlyList<ClientPortalUserResponse>> result = await handler.Handle(query, cancellationToken);
             return result.IsSuccess ? Results.Ok(result.Value) : CustomResults.Problem(result);
         })
         .WithTags(Tags.Clients);
@@ -29,7 +29,7 @@ internal sealed class PortalUsers : IEndpoint
         app.MapPost("clients/{id}/portal-users", async (
             Guid id,
             CreatePortalUserRequest request,
-            ISender sender,
+            ICommandHandler<CreatePortalUserCommand, Guid> handler,
             CancellationToken cancellationToken) =>
         {
             var command = new CreatePortalUserCommand(
@@ -39,7 +39,7 @@ internal sealed class PortalUsers : IEndpoint
                 request.PlainTextPassword,
                 Enum.Parse<ClientPortalRole>(request.Role));
 
-            Result<Guid> result = await sender.Send(command, cancellationToken);
+            Result<Guid> result = await handler.Handle(command, cancellationToken);
             return result.IsSuccess ? Results.Created($"/clients/{id}/portal-users/{result.Value}", result.Value) : CustomResults.Problem(result);
         })
         .WithTags(Tags.Clients);
@@ -48,7 +48,7 @@ internal sealed class PortalUsers : IEndpoint
             Guid id,
             Guid userId,
             UpdatePortalUserRequest request,
-            ISender sender,
+            ICommandHandler<UpdatePortalUserCommand> handler,
             CancellationToken cancellationToken) =>
         {
             var command = new UpdatePortalUserCommand(
@@ -59,7 +59,7 @@ internal sealed class PortalUsers : IEndpoint
                 Enum.Parse<ClientPortalRole>(request.Role),
                 request.IsActive);
 
-            Result result = await sender.Send(command, cancellationToken);
+            Result result = await handler.Handle(command, cancellationToken);
             return result.IsSuccess ? Results.NoContent() : CustomResults.Problem(result);
         })
         .WithTags(Tags.Clients);
