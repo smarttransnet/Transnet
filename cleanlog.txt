@@ -1,0 +1,116 @@
+commit 1415065d7faa90a948792777aa84413c18020f4a
+Author: sampaw80 <63644319+sampaw80@users.noreply.github.com>
+Date:   Wed Mar 25 08:01:19 2026 +0000
+
+    Update appsettings.Development.json
+    
+    Create new db
+
+diff --git a/src/Web.Api/appsettings.Development.json b/src/Web.Api/appsettings.Development.json
+index 35f325a..d9a65ad 100644
+--- a/src/Web.Api/appsettings.Development.json
++++ b/src/Web.Api/appsettings.Development.json
+@@ -1,6 +1,6 @@
+ {
+   "ConnectionStrings": {
+-    "Database": "Host=smart-transnet-db.c3gmk0kosmai.ap-southeast-1.rds.amazonaws.com;Port=5432;Database=smart_transnet;Username=smartuser;Password=Smart2026;SSL Mode=Require;Trust Server Certificate=true"
++    "Database": "Host=smart-transnet-db.c3gmk0kosmai.ap-southeast-1.rds.amazonaws.com;Port=5432;Database=smart_transnet_1;Username=smartuser;Password=Smart2026;SSL Mode=Require;Trust Server Certificate=true"
+   },
+   "Serilog": {
+     "Using": [
+
+commit d55c22055b248738105275da18ca6e531c26163e
+Author: Bhathiya Dasanayake <bhathiyamadusanka@gmail.com>
+Date:   Fri Mar 20 23:40:23 2026 +0800
+
+    Update database connection string SSL settings
+
+diff --git a/src/Web.Api/appsettings.Development.json b/src/Web.Api/appsettings.Development.json
+index a986035..35f325a 100644
+--- a/src/Web.Api/appsettings.Development.json
++++ b/src/Web.Api/appsettings.Development.json
+@@ -1,6 +1,6 @@
+ {
+   "ConnectionStrings": {
+-    "Database": "Host=smart-transnet-db.c3gmk0kosmai.ap-southeast-1.rds.amazonaws.com;Port=5432;Database=smart_transnet;Username=smartuser;Password=Smart2026;SSL Mode=Disable"
++    "Database": "Host=smart-transnet-db.c3gmk0kosmai.ap-southeast-1.rds.amazonaws.com;Port=5432;Database=smart_transnet;Username=smartuser;Password=Smart2026;SSL Mode=Require;Trust Server Certificate=true"
+   },
+   "Serilog": {
+     "Using": [
+@@ -28,4 +28,4 @@
+     "Audience": "developers",
+     "ExpirationInMinutes": 60
+   }
+-}
+\ No newline at end of file
++}
+
+commit 98f70f21253f6a1308a353cdca34a961e4907c7d
+Author: bhathiyad <bhathiyamadusanka@gmail.com>
+Date:   Fri Mar 20 22:51:30 2026 +0800
+
+    change to postgre db
+
+diff --git a/src/Web.Api/appsettings.Development.json b/src/Web.Api/appsettings.Development.json
+index 60bebb7..a986035 100644
+--- a/src/Web.Api/appsettings.Development.json
++++ b/src/Web.Api/appsettings.Development.json
+@@ -1,6 +1,6 @@
+ {
+   "ConnectionStrings": {
+-    "Database": "Server=L04900;Initial Catalog=TestDb;Persist Security Info=False;User ID=sa;Password=Password@123;MultipleActiveResultSets=True;TrustServerCertificate=True;"
++    "Database": "Host=smart-transnet-db.c3gmk0kosmai.ap-southeast-1.rds.amazonaws.com;Port=5432;Database=smart_transnet;Username=smartuser;Password=Smart2026;SSL Mode=Disable"
+   },
+   "Serilog": {
+     "Using": [
+@@ -28,4 +28,4 @@
+     "Audience": "developers",
+     "ExpirationInMinutes": 60
+   }
+-}
++}
+\ No newline at end of file
+
+commit baa2f9eecf8900780a0d53266f70a789a473b07e
+Author: bhath <bhathiyad@outlook.com>
+Date:   Sun Mar 8 18:00:00 2026 +0800
+
+    Add project files.
+
+diff --git a/src/Web.Api/appsettings.Development.json b/src/Web.Api/appsettings.Development.json
+new file mode 100644
+index 0000000..60bebb7
+--- /dev/null
++++ b/src/Web.Api/appsettings.Development.json
+@@ -0,0 +1,31 @@
++{
++  "ConnectionStrings": {
++    "Database": "Server=L04900;Initial Catalog=TestDb;Persist Security Info=False;User ID=sa;Password=Password@123;MultipleActiveResultSets=True;TrustServerCertificate=True;"
++  },
++  "Serilog": {
++    "Using": [
++      "Serilog.Sinks.Console",
++      "Serilog.Sinks.Seq"
++    ],
++    "MinimumLevel": {
++      "Default": "Information",
++      "Override": {
++        "Microsoft": "Information"
++      }
++    },
++    "WriteTo": [
++      { "Name": "Console" },
++      {
++        "Name": "Seq",
++        "Args": { "ServerUrl": "http://seq:5341" }
++      }
++    ],
++    "Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId" ]
++  },
++  "Jwt": {
++    "Secret": "super-duper-secret-value-that-should-be-in-user-secrets",
++    "Issuer": "clean-architecture",
++    "Audience": "developers",
++    "ExpirationInMinutes": 60
++  }
++}
