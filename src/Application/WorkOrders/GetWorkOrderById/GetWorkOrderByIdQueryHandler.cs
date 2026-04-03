@@ -11,46 +11,48 @@ internal sealed class GetWorkOrderByIdQueryHandler(IApplicationDbContext dbConte
 {
     public async Task<Result<WorkOrderResponse>> Handle(GetWorkOrderByIdQuery request, CancellationToken cancellationToken)
     {
-        WorkOrderResponse? workOrder = await dbContext.WorkOrders
+        var entity = await dbContext.WorkOrders
             .AsNoTracking()
+            .Include(wo => wo.Vehicle)
             .Include(wo => wo.WorkOrderItems)
             .Include(wo => wo.StatusHistory)
-            .Where(wo => wo.Id == request.WorkOrderId)
-            .Select(wo => new WorkOrderResponse(
-                wo.Id,
-                wo.WorkOrderNumber,
-                wo.VehicleId,
-                wo.VehicleInspectionId,
-                wo.Title,
-                wo.Description,
-                wo.Priority,
-                wo.Status,
-                wo.AssignedTechnicianId,
-                wo.EstimatedCostQAR,
-                wo.ActualCostQAR,
-                wo.ScheduledDate,
-                wo.StartedAt,
-                wo.CompletedAt,
-                wo.WorkOrderItems.Select(i => new WorkOrderItemResponse(
-                    i.Id,
-                    i.ItemType,
-                    i.Description,
-                    i.Quantity,
-                    i.UnitCostQAR,
-                    i.TotalCostQAR)).ToList(),
-                wo.StatusHistory.Select(h => new WorkOrderStatusHistoryResponse(
-                    h.Id,
-                    h.PreviousStatus,
-                    h.NewStatus,
-                    h.ChangedByUserId,
-                    h.Notes,
-                    h.ChangedAt)).OrderByDescending(h => h.ChangedAt).ToList()))
-            .SingleOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(wo => wo.Id == request.WorkOrderId, cancellationToken);
 
-        if (workOrder is null)
+        if (entity is null)
         {
             return Result.Failure<WorkOrderResponse>(WorkOrderErrors.NotFound(request.WorkOrderId));
         }
+
+        WorkOrderResponse workOrder = new WorkOrderResponse(
+            entity.Id,
+            entity.WorkOrderNumber,
+            entity.VehicleId,
+            entity.Vehicle.RegistrationNumber,
+            entity.VehicleInspectionId,
+            entity.Title,
+            entity.Description,
+            entity.Priority,
+            entity.Status,
+            entity.AssignedTechnicianId,
+            entity.EstimatedCostQAR,
+            entity.ActualCostQAR,
+            entity.ScheduledDate,
+            entity.StartedAt,
+            entity.CompletedAt,
+            entity.WorkOrderItems.Select(i => new WorkOrderItemResponse(
+                i.Id,
+                i.ItemType,
+                i.Description,
+                i.Quantity,
+                i.UnitCostQAR,
+                i.TotalCostQAR)).ToList(),
+            entity.StatusHistory.Select(h => new WorkOrderStatusHistoryResponse(
+                h.Id,
+                h.PreviousStatus,
+                h.NewStatus,
+                h.ChangedByUserId,
+                h.Notes,
+                h.ChangedAt)).OrderByDescending(h => h.ChangedAt).ToList());
 
         return workOrder;
     }
