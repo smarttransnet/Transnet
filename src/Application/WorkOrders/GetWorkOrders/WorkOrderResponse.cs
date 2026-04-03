@@ -22,6 +22,7 @@ public sealed record WorkOrderResponse(
     Guid Id,
     string WorkOrderNumber,
     Guid VehicleId,
+    string VehicleRegistration,
     Guid? VehicleInspectionId,
     string Title,
     string Description,
