@@ -15,6 +15,8 @@ public sealed record TripResponse(
     decimal? TotalDistanceKm,
     bool IsImported,
     Guid? ImportBatchId,
+    string Origin,
+    string Destination,
     DateTime? DriverConfirmedAt,
     DateTime? OfficeApprovedAt,
     Guid? OfficeApprovedByUserId,

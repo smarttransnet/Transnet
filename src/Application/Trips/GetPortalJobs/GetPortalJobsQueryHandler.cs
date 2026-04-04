@@ -4,15 +4,17 @@ using Application.Trips.Common;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
 
-namespace Application.Trips.GetTrips;
+namespace Application.Trips.GetPortalJobs;
 
-internal sealed class GetTripsQueryHandler(IApplicationDbContext dbContext)
-    : IQueryHandler<GetTripsQuery, List<TripResponse>>
+internal sealed class GetPortalJobsQueryHandler(IApplicationDbContext dbContext)
+    : IQueryHandler<GetPortalJobsQuery, List<TripResponse>>
 {
-    public async Task<Result<List<TripResponse>>> Handle(GetTripsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<List<TripResponse>>> Handle(GetPortalJobsQuery request, CancellationToken cancellationToken)
     {
         List<TripResponse> trips = await dbContext.Trips
             .AsNoTracking()
+            .Where(t => t.ClientId == request.ClientId)
+            .OrderByDescending(t => t.ScheduledStartAt)
             .Select(t => new TripResponse(
                 t.Id,
                 t.TripNumber,

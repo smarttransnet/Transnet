@@ -1,4 +1,5 @@
 using Domain.Trips.Enums;
+using Domain.Clients;
 using SharedKernel;
 
 namespace Domain.Trips;
@@ -10,6 +11,9 @@ public sealed class Trip : Entity
     public Guid DriverId { get; set; }
     public Guid VehicleId { get; set; }
     public Guid? TrailerId { get; set; }
+    public Guid? ClientId { get; set; }
+    public string Origin { get; set; } = string.Empty;
+    public string Destination { get; set; } = string.Empty;
     public TripStatus Status { get; set; }
     public DateTime ScheduledStartAt { get; set; }
     public DateTime? ActualStartAt { get; set; }
@@ -23,6 +27,8 @@ public sealed class Trip : Entity
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
+    // Navigation Properties
+    public Client? Client { get; set; }
     public ICollection<TripStop> Stops { get; set; } = new List<TripStop>();
     public ICollection<TripHalt> Halts { get; set; } = new List<TripHalt>();
     public TripVoucher? Voucher { get; set; }
