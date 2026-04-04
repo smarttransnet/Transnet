@@ -22,4 +22,7 @@ public sealed record TripResponse(
     Guid? OfficeApprovedByUserId,
     DateTime CreatedAt,
     DateTime UpdatedAt,
-    List<TripStopResponse>? Stops = null);
+    List<TripStopResponse>? Stops = null,
+    List<TripHaltResponse>? Halts = null,
+    TripVoucherResponse? Voucher = null,
+    List<TripPodUploadResponse>? PodUploads = null);

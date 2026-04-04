@@ -35,6 +35,9 @@ internal sealed class GetPortalJobsQueryHandler(IApplicationDbContext dbContext)
                 t.OfficeApprovedByUserId,
                 t.CreatedAt,
                 t.UpdatedAt,
+                null,
+                null,
+                null,
                 null))
             .ToListAsync(cancellationToken);
 
