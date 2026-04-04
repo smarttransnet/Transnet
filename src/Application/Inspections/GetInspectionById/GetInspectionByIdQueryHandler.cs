@@ -55,7 +55,7 @@ internal sealed class GetInspectionByIdQueryHandler(IApplicationDbContext contex
             inspection.InspectionResults.Select(r => new InspectionResultResponse(
                 r.Id,
                 r.ChecklistItemId,
-                r.ChecklistItem.ItemName,
+                r.ChecklistItem?.ItemName ?? "Unknown Checklist Item",
                 r.IsPassed,
                 r.Remarks)).ToList(),
             inspection.Photos.Select(p => new InspectionPhotoResponse(
