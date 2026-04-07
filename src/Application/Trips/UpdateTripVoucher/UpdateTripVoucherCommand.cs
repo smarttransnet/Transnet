@@ -3,7 +3,6 @@ using Application.Abstractions.Messaging;
 namespace Application.Trips.UpdateTripVoucher;
 
 public sealed record UpdateTripVoucherCommand(
-    Guid Id,
     Guid TripId,
     string VoucherNumber,
     DateTime VoucherDate,

@@ -13,15 +13,13 @@ public sealed class UpdateTripVoucher : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("trips/{id:guid}/voucher/{voucherId:guid}", async (
+        app.MapPut("trips/{id:guid}/voucher", async (
             Guid id, 
-            Guid voucherId, 
             UpdateTripVoucherRequest request, 
             ICommandHandler<UpdateTripVoucherCommand> handler,
             CancellationToken cancellationToken) =>
         {
             var command = new UpdateTripVoucherCommand(
-                voucherId,
                 id,
                 request.VoucherNumber,
                 request.VoucherDate,
