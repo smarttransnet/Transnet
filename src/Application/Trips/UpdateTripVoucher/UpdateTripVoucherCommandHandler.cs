@@ -18,11 +18,11 @@ internal sealed class UpdateTripVoucherCommandHandler : ICommandHandler<UpdateTr
     public async Task<Result> Handle(UpdateTripVoucherCommand request, CancellationToken cancellationToken)
     {
         TripVoucher? voucher = await _context.TripVouchers
-            .FirstOrDefaultAsync(v => v.Id == request.Id && v.TripId == request.TripId, cancellationToken);
+            .FirstOrDefaultAsync(v => v.TripId == request.TripId, cancellationToken);
 
         if (voucher is null)
         {
-            return Result.Failure(Error.NotFound("TripVoucher.NotFound", $"Voucher with ID {request.Id} for trip {request.TripId} was not found."));
+            return Result.Failure(Error.NotFound("TripVoucher.NotFound", $"Trip voucher for trip {request.TripId} was not found."));
         }
 
         voucher.VoucherNumber = request.VoucherNumber;
