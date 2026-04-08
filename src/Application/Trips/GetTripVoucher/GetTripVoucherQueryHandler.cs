@@ -18,24 +18,34 @@ internal sealed class GetTripVoucherQueryHandler : IQueryHandler<GetTripVoucherQ
 
     public async Task<Result<TripVoucherResponse>> Handle(GetTripVoucherQuery request, CancellationToken cancellationToken)
     {
-        TripVoucher? voucher = await _context.TripVouchers
+        var voucherResult = await _context.TripVouchers
+            .Where(v => v.TripId == request.TripId)
             .Include(v => v.CustomFields)
-            .FirstOrDefaultAsync(v => v.TripId == request.TripId, cancellationToken);
+            .Select(v => new
+            {
+                Voucher = v,
+                CreatedByUserName = _context.Users
+                    .Where(u => u.Id == v.CreatedByUserId)
+                    .Select(u => u.FirstName + " " + u.LastName)
+                    .FirstOrDefault() ?? "System Administrator"
+            })
+            .FirstOrDefaultAsync(cancellationToken);
 
-        if (voucher is null)
+        if (voucherResult is null)
         {
             return Result.Failure<TripVoucherResponse>(Error.NotFound("TripVoucher.NotFound", $"Voucher for trip {request.TripId} was not found."));
         }
 
         TripVoucherResponse response = new(
-            voucher.Id,
-            voucher.TripId,
-            voucher.VoucherNumber,
-            voucher.VoucherDate,
-            voucher.Notes,
-            voucher.CreatedByUserId,
-            voucher.CreatedAt,
-            voucher.CustomFields.Select(cf => new TripCustomFieldResponse(
+            voucherResult.Voucher.Id,
+            voucherResult.Voucher.TripId,
+            voucherResult.Voucher.VoucherNumber,
+            voucherResult.Voucher.VoucherDate,
+            voucherResult.Voucher.Notes,
+            voucherResult.Voucher.CreatedByUserId,
+            voucherResult.CreatedByUserName,
+            voucherResult.Voucher.CreatedAt,
+            voucherResult.Voucher.CustomFields.Select(cf => new TripCustomFieldResponse(
                 cf.Id,
                 cf.TripId,
                 cf.TripVoucherId,
