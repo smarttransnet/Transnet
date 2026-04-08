@@ -1,5 +1,6 @@
 using Application.Abstractions.Messaging;
 using Application.Quotations.Commands.CreateQuotation;
+using Application.Quotations.Commands.ConvertQuotationToInvoice;
 using Application.Quotations.Commands.DeleteQuotation;
 using Application.Quotations.Commands.UpdateQuotation;
 using Application.Quotations.Queries.GetQuotationById;
@@ -67,6 +68,20 @@ internal sealed class QuotationEndpoints : IEndpoint
             var command = new DeleteQuotationCommand(id);
             Result result = await handler.Handle(command, cancellationToken);
             return result.IsSuccess ? Results.NoContent() : CustomResults.Problem(result);
+        });
+
+        group.MapPost("{id}/convert", async (
+            Guid id,
+            ConvertQuotationToInvoiceCommand command,
+            ICommandHandler<ConvertQuotationToInvoiceCommand, Guid> handler,
+            CancellationToken cancellationToken) =>
+        {
+            if (id != command.QuotationId)
+            {
+                return Results.BadRequest("ID mismatch");
+            }
+            Result<Guid> result = await handler.Handle(command, cancellationToken);
+            return result.IsSuccess ? Results.Ok(result.Value) : CustomResults.Problem(result);
         });
     }
 }

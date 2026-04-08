@@ -52,6 +52,7 @@ internal sealed class UpdateQuotationCommandHandler(IApplicationDbContext dbCont
         foreach (var item in itemsToRemove)
         {
             quotation.LineItems.Remove(item);
+            dbContext.QuotationLineItems.Remove(item); // Explicit deletion to prevent orphaning
         }
 
         // Recalculate totals
