@@ -7,5 +7,6 @@ public sealed record TripVoucherResponse(
     DateTime VoucherDate,
     string? Notes,
     Guid CreatedByUserId,
+    string CreatedByUserName,
     DateTime CreatedAt,
     List<TripCustomFieldResponse> CustomFields);

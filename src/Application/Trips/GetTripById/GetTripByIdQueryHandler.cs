@@ -31,6 +31,15 @@ internal sealed class GetTripByIdQueryHandler : IQueryHandler<GetTripByIdQuery, 
             return Result.Failure<TripResponse>(TripErrors.NotFound(request.Id));
         }
 
+        string creatorName = "System Administrator";
+        if (trip.Voucher != null)
+        {
+            creatorName = await _context.Users
+                .Where(u => u.Id == trip.Voucher.CreatedByUserId)
+                .Select(u => u.FirstName + " " + u.LastName)
+                .FirstOrDefaultAsync(cancellationToken) ?? "System Administrator";
+        }
+
         TripResponse response = new(
             trip.Id,
             trip.TripNumber,
@@ -86,6 +95,7 @@ internal sealed class GetTripByIdQueryHandler : IQueryHandler<GetTripByIdQuery, 
                 trip.Voucher.VoucherDate,
                 trip.Voucher.Notes,
                 trip.Voucher.CreatedByUserId,
+                creatorName,
                 trip.Voucher.CreatedAt,
                 trip.Voucher.CustomFields.Select(cf => new TripCustomFieldResponse(
                     cf.Id,
