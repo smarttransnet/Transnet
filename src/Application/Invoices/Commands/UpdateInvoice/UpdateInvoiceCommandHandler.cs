@@ -52,6 +52,7 @@ internal sealed class UpdateInvoiceCommandHandler(IApplicationDbContext dbContex
         foreach (var item in itemsToRemove)
         {
             invoice.LineItems.Remove(item);
+            dbContext.InvoiceLineItems.Remove(item); // Explicit deletion to prevent orphaning
         }
 
         // Recalculate totals

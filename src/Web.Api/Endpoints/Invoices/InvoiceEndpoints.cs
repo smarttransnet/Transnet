@@ -2,6 +2,8 @@ using Application.Abstractions.Messaging;
 using Application.Invoices.Commands.CreateInvoice;
 using Application.Invoices.Commands.DeleteInvoice;
 using Application.Invoices.Commands.UpdateInvoice;
+using Application.Invoices.Commands.IssueInvoice;
+using Application.Invoices.Commands.CancelInvoice;
 using Application.Invoices.Queries.GetInvoiceById;
 using Application.Invoices.Queries.GetInvoices;
 using MediatR;
@@ -66,6 +68,26 @@ internal sealed class InvoiceEndpoints : IEndpoint
             CancellationToken cancellationToken) =>
         {
             var command = new DeleteInvoiceCommand(id);
+            Result result = await handler.Handle(command, cancellationToken);
+            return result.IsSuccess ? Results.NoContent() : CustomResults.Problem(result);
+        });
+
+        group.MapPut("{id}/issue", async (
+            Guid id,
+            ICommandHandler<IssueInvoiceCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            var command = new IssueInvoiceCommand(id);
+            Result result = await handler.Handle(command, cancellationToken);
+            return result.IsSuccess ? Results.NoContent() : CustomResults.Problem(result);
+        });
+
+        group.MapPut("{id}/cancel", async (
+            Guid id,
+            ICommandHandler<CancelInvoiceCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            var command = new CancelInvoiceCommand(id);
             Result result = await handler.Handle(command, cancellationToken);
             return result.IsSuccess ? Results.NoContent() : CustomResults.Problem(result);
         });
