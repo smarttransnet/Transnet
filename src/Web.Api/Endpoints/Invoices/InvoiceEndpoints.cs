@@ -4,8 +4,11 @@ using Application.Invoices.Commands.DeleteInvoice;
 using Application.Invoices.Commands.UpdateInvoice;
 using Application.Invoices.Commands.IssueInvoice;
 using Application.Invoices.Commands.CancelInvoice;
+using Application.Invoices.Commands.RecordPayment;
+using Application.Invoices.Commands.LinkTripToInvoice;
 using Application.Invoices.Queries.GetInvoiceById;
 using Application.Invoices.Queries.GetInvoices;
+using Domain.Billing.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using SharedKernel;
@@ -91,5 +94,47 @@ internal sealed class InvoiceEndpoints : IEndpoint
             Result result = await handler.Handle(command, cancellationToken);
             return result.IsSuccess ? Results.NoContent() : CustomResults.Problem(result);
         });
+
+        group.MapPost("{id}/payments", async (
+            Guid id,
+            RecordPaymentRequest request,
+            ICommandHandler<RecordPaymentCommand, Guid> handler,
+            CancellationToken cancellationToken) =>
+        {
+            var command = new RecordPaymentCommand(
+                id,
+                request.RecordedByUserId,
+                request.AmountQAR,
+                request.PaymentMethod,
+                request.PaymentDate,
+                request.PaymentReference,
+                request.Notes);
+
+            Result<Guid> result = await handler.Handle(command, cancellationToken);
+            return result.IsSuccess ? Results.Ok(result.Value) : CustomResults.Problem(result);
+        });
+
+        group.MapPost("{id}/trip-links", async (
+            Guid id,
+            LinkTripRequest request,
+            ICommandHandler<LinkTripToInvoiceCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            var command = new LinkTripToInvoiceCommand(id, request.TripId, request.LinkedByUserId);
+            Result result = await handler.Handle(command, cancellationToken);
+            return result.IsSuccess ? Results.NoContent() : CustomResults.Problem(result);
+        });
     }
 }
+
+public record RecordPaymentRequest(
+    Guid RecordedByUserId,
+    decimal AmountQAR,
+    PaymentMethod PaymentMethod,
+    DateOnly PaymentDate,
+    string? PaymentReference,
+    string? Notes);
+
+public record LinkTripRequest(
+    Guid TripId,
+    Guid LinkedByUserId);
