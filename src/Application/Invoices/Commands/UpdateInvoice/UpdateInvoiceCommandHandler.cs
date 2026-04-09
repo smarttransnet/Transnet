@@ -25,12 +25,28 @@ internal sealed class UpdateInvoiceCommandHandler(IApplicationDbContext dbContex
         invoice.Notes = request.Notes;
         invoice.ReportFormatId = request.ReportFormatId;
 
-        // Update line items
+        // 1. Identify items to remove
+        var requestItemIds = request.LineItems
+            .Where(li => li.Id.HasValue)
+            .Select(li => li.Id!.Value)
+            .ToList();
+
+        var itemsToRemove = invoice.LineItems
+            .Where(li => !requestItemIds.Contains(li.Id))
+            .ToList();
+
+        foreach (var item in itemsToRemove)
+        {
+            invoice.LineItems.Remove(item);
+            dbContext.InvoiceLineItems.Remove(item);
+        }
+
+        // 2. Update or Add items
         foreach (var itemCommand in request.LineItems)
         {
             if (itemCommand.Id.HasValue)
             {
-                var existingItem = invoice.LineItems.FirstOrDefault(i => i.Id == itemCommand.Id!.Value);
+                var existingItem = invoice.LineItems.FirstOrDefault(i => i.Id == itemCommand.Id.Value);
                 if (existingItem != null)
                 {
                     UpdateItem(existingItem, itemCommand);
@@ -44,15 +60,6 @@ internal sealed class UpdateInvoiceCommandHandler(IApplicationDbContext dbContex
             {
                 AddItem(invoice, itemCommand);
             }
-        }
-
-        // Remove old items
-        var itemIdsToKeep = request.LineItems.Where(i => i.Id.HasValue).Select(i => i.Id!.Value).ToList();
-        var itemsToRemove = invoice.LineItems.Where(i => !itemIdsToKeep.Contains(i.Id) && i.Id != Guid.Empty).ToList();
-        foreach (var item in itemsToRemove)
-        {
-            invoice.LineItems.Remove(item);
-            dbContext.InvoiceLineItems.Remove(item); // Explicit deletion to prevent orphaning
         }
 
         // Recalculate totals
