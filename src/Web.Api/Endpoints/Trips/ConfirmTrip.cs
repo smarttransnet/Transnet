@@ -19,7 +19,7 @@ public sealed class ConfirmTrip : IEndpoint
             ICommandHandler<ConfirmTripCommand> handler,
             CancellationToken cancellationToken) =>
         {
-            var command = new ConfirmTripCommand(id, request.DriverId);
+            var command = new ConfirmTripCommand(id);
 
             Result result = await handler.Handle(command, cancellationToken);
 
@@ -29,4 +29,4 @@ public sealed class ConfirmTrip : IEndpoint
     }
 }
 
-public sealed record ConfirmTripRequest(Guid DriverId);
+public sealed record ConfirmTripRequest(DateTime ConfirmedAt);

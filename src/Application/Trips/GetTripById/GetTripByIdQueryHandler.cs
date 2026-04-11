@@ -40,9 +40,9 @@ internal sealed class GetTripByIdQueryHandler : IQueryHandler<GetTripByIdQuery, 
                 .FirstOrDefaultAsync(cancellationToken) ?? "System Administrator";
         }
 
-        string driverName = await _context.Users
-            .Where(u => u.Id == trip.DriverId)
-            .Select(u => u.FirstName + " " + u.LastName)
+        string driverName = await _context.Drivers
+            .Where(d => d.Id == trip.DriverId)
+            .Select(d => d.FirstName + " " + d.LastName)
             .FirstOrDefaultAsync(cancellationToken) ?? "Unknown Driver";
 
         string vehicleReg = await _context.Vehicles

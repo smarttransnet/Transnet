@@ -27,6 +27,43 @@ internal sealed class TransitionTripStatusCommandHandler : ICommandHandler<Trans
             return Result.Failure(TripErrors.NotFound(request.Id));
         }
 
+        ApplyChanges(trip, request);
+
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            // If the context is a DbContext, detach all tracked entities to avoid interference on retry
+            if (_context is DbContext dbContext)
+            {
+                foreach (var entry in dbContext.ChangeTracker.Entries().ToList())
+                {
+                    entry.State = EntityState.Detached;
+                }
+            }
+
+            // Reload and retry once
+            Trip? updatedTrip = await _context.Trips
+                .Include(t => t.StatusHistory)
+                .FirstOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
+
+            if (updatedTrip is null)
+            {
+                return Result.Failure(TripErrors.NotFound(request.Id));
+            }
+
+            ApplyChanges(updatedTrip, request);
+
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        return Result.Success();
+    }
+
+    private static void ApplyChanges(Trip trip, TransitionTripStatusCommand request)
+    {
         TripStatus previousStatus = trip.Status;
         trip.Status = request.NewStatus;
         trip.UpdatedAt = DateTime.UtcNow;
@@ -44,7 +81,6 @@ internal sealed class TransitionTripStatusCommandHandler : ICommandHandler<Trans
         // Record history
         trip.StatusHistory.Add(new TripStatusHistory
         {
-            Id = Guid.NewGuid(),
             TripId = trip.Id,
             PreviousStatus = previousStatus,
             NewStatus = request.NewStatus,
@@ -54,58 +90,5 @@ internal sealed class TransitionTripStatusCommandHandler : ICommandHandler<Trans
             ChangedByUserId = request.ChangedByUserId,
             ChangedByDriverId = request.ChangedByDriverId
         });
-
-        try
-        {
-            await _context.SaveChangesAsync(cancellationToken);
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            // Reload and retry once
-            if (_context is DbContext dbContext)
-            {
-                dbContext.Entry(trip!).State = EntityState.Detached;
-            }
-            
-            Trip? updatedTrip = await _context.Trips
-                .Include(t => t.StatusHistory)
-                .FirstOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
-
-            if (updatedTrip is null)
-            {
-                return Result.Failure(TripErrors.NotFound(request.Id));
-            }
-
-            // Re-apply state changes to the fresh entity
-            TripStatus currentStatus = updatedTrip.Status;
-            updatedTrip.Status = request.NewStatus;
-            updatedTrip.UpdatedAt = DateTime.UtcNow;
-
-            if (request.NewStatus == TripStatus.InProgress && updatedTrip.ActualStartAt is null)
-            {
-                updatedTrip.ActualStartAt = DateTime.UtcNow;
-            }
-            else if (request.NewStatus == TripStatus.Completed && updatedTrip.ActualEndAt is null)
-            {
-                updatedTrip.ActualEndAt = DateTime.UtcNow;
-            }
-
-            updatedTrip.StatusHistory.Add(new TripStatusHistory
-            {
-                Id = Guid.NewGuid(),
-                TripId = updatedTrip.Id,
-                PreviousStatus = currentStatus,
-                NewStatus = request.NewStatus,
-                ChangedAt = DateTime.UtcNow,
-                Notes = request.Notes,
-                Source = request.Source,
-                ChangedByUserId = request.ChangedByUserId,
-                ChangedByDriverId = request.ChangedByDriverId
-            });
-
-            await _context.SaveChangesAsync(cancellationToken);
-        }
-
-        return Result.Success();
     }
 }

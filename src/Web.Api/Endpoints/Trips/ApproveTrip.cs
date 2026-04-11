@@ -19,7 +19,7 @@ public sealed class ApproveTrip : IEndpoint
             ICommandHandler<ApproveTripCommand> handler,
             CancellationToken cancellationToken) =>
         {
-            var command = new ApproveTripCommand(id, request.UserId);
+            var command = new ApproveTripCommand(id, request.ApprovedByUserId);
 
             Result result = await handler.Handle(command, cancellationToken);
 
@@ -29,4 +29,4 @@ public sealed class ApproveTrip : IEndpoint
     }
 }
 
-public sealed record ApproveTripRequest(Guid UserId);
+public sealed record ApproveTripRequest(DateTime ApprovedAt, Guid ApprovedByUserId);
