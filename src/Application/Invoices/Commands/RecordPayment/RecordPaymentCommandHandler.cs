@@ -14,6 +14,7 @@ internal sealed class RecordPaymentCommandHandler(
     public async Task<Result<Guid>> Handle(RecordPaymentCommand request, CancellationToken cancellationToken)
     {
         Invoice? invoice = await dbContext.Invoices
+            .Include(i => i.Payments)
             .FirstOrDefaultAsync(i => i.Id == request.InvoiceId, cancellationToken);
 
         if (invoice is null)
