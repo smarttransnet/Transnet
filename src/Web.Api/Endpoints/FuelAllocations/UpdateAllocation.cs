@@ -9,11 +9,12 @@ namespace Web.Api.Endpoints.FuelAllocations;
 
 public sealed record UpdateAllocationRequest(
     Guid VehicleId,
-    Guid? TripId,
-    decimal QuantityLitres,
-    decimal AmountQAR,
-    DateOnly AllocationDate,
-    string? Notes
+    string? TripId,
+    decimal Liters,
+    decimal Amount,
+    string FuelType,
+    DateOnly Date,
+    string? Remarks
 );
 
 internal sealed class UpdateAllocation : IEndpoint
@@ -27,14 +28,26 @@ internal sealed class UpdateAllocation : IEndpoint
             ICommandHandler<UpdateFuelAllocationCommand> handler,
             CancellationToken cancellationToken) =>
         {
+            Guid? tripId = null;
+            if (!string.IsNullOrWhiteSpace(request.TripId) && Guid.TryParse(request.TripId, out var parsedGuid))
+            {
+                tripId = parsedGuid;
+            }
+
+            if (!Enum.TryParse<Domain.Fuel.Enums.FuelType>(request.FuelType, true, out var fuelType))
+            {
+                fuelType = Domain.Fuel.Enums.FuelType.Other;
+            }
+
             var command = new UpdateFuelAllocationCommand(
                 id,
                 request.VehicleId,
-                request.TripId,
-                request.QuantityLitres,
-                request.AmountQAR,
-                request.AllocationDate,
-                request.Notes,
+                tripId,
+                request.Liters,
+                request.Amount,
+                fuelType,
+                request.Date,
+                request.Remarks,
                 userContext.UserId
             );
 

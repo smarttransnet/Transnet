@@ -20,6 +20,7 @@ internal sealed class CreateFuelAllocationCommandHandler(
             AllocationSource = FuelAllocationSource.ManualEntry,
             QuantityLitres = request.QuantityLitres,
             AmountQAR = request.AmountQAR,
+            FuelType = request.FuelType,
             AllocationDate = request.AllocationDate,
             AllocatedByUserId = request.UserId,
             Notes = request.Notes,

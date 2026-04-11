@@ -28,22 +28,23 @@ internal sealed class GetVehicleFuelSummariesQueryHandler(
             query = query.Where(s => s.PeriodYear == request.PeriodYear.Value);
         }
 
-        List<VehicleFuelSummaryResponse> summaries = await query
-            .OrderByDescending(s => s.PeriodYear)
-            .ThenByDescending(s => s.PeriodMonth)
-            .Select(s => new VehicleFuelSummaryResponse(
-                s.Id,
-                s.VehicleId,
-                s.PeriodMonth,
-                s.PeriodYear,
-                s.TotalLitres,
-                s.TotalCostQAR,
-                s.AverageCostPerLitreQAR,
-                s.AverageFuelEfficiencyKmPerL,
-                s.WoqoodTransactionCount,
-                s.DriverEntryCount,
-                s.LastUpdatedAt
-            ))
+        List<VehicleFuelSummaryResponse> summaries = await (from s in query
+                                                            join v in dbContext.Vehicles on s.VehicleId equals v.Id
+                                                            orderby s.PeriodYear descending, s.PeriodMonth descending
+                                                            select new VehicleFuelSummaryResponse(
+                                                                s.Id,
+                                                                s.VehicleId,
+                                                                v.PlateNumber,
+                                                                s.PeriodMonth,
+                                                                s.PeriodYear,
+                                                                s.TotalLitres,
+                                                                s.TotalCostQAR,
+                                                                s.AverageCostPerLitreQAR,
+                                                                s.AverageFuelEfficiencyKmPerL,
+                                                                s.WoqoodTransactionCount,
+                                                                s.DriverEntryCount,
+                                                                s.LastUpdatedAt
+                                                            ))
             .ToListAsync(cancellationToken);
 
         return summaries;

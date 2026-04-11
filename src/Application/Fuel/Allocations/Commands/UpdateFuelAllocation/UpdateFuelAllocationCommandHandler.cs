@@ -24,6 +24,7 @@ internal sealed class UpdateFuelAllocationCommandHandler(
         allocation.TripId = request.TripId;
         allocation.QuantityLitres = request.QuantityLitres;
         allocation.AmountQAR = request.AmountQAR;
+        allocation.FuelType = request.FuelType;
         allocation.AllocationDate = request.AllocationDate;
         allocation.Notes = request.Notes;
 
