@@ -39,9 +39,9 @@ app.MapEndpoints();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwaggerWithUi();
-
-    app.ApplyMigrations();
 }
+
+app.ApplyMigrations();
 
 app.MapHealthChecks("health", new HealthCheckOptions
 {
