@@ -23,7 +23,7 @@ internal sealed class UpsertWoqoodCardMappingCommandHandler(
             existing.Notes = request.Notes;
             existing.MappedAt = DateTime.UtcNow;
             existing.MappedByUserId = request.UserId;
-            existing.IsActive = true;
+            existing.IsActive = request.IsActive;
             
             await dbContext.SaveChangesAsync(cancellationToken);
             return existing.Id;
@@ -39,7 +39,7 @@ internal sealed class UpsertWoqoodCardMappingCommandHandler(
             Notes = request.Notes,
             MappedAt = DateTime.UtcNow,
             MappedByUserId = request.UserId,
-            IsActive = true
+            IsActive = request.IsActive
         };
 
         dbContext.WoqoodCardMappings.Add(newMapping);
