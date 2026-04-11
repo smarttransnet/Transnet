@@ -38,6 +38,9 @@ internal sealed class GetPortalJobsQueryHandler(IApplicationDbContext dbContext)
                 null,
                 null,
                 null,
+                null,
+                null,
+                null,
                 null))
             .ToListAsync(cancellationToken);
 

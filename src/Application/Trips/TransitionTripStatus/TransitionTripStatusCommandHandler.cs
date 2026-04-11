@@ -55,7 +55,56 @@ internal sealed class TransitionTripStatusCommandHandler : ICommandHandler<Trans
             ChangedByDriverId = request.ChangedByDriverId
         });
 
-        await _context.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            // Reload and retry once
+            if (_context is DbContext dbContext)
+            {
+                dbContext.Entry(trip!).State = EntityState.Detached;
+            }
+            
+            Trip? updatedTrip = await _context.Trips
+                .Include(t => t.StatusHistory)
+                .FirstOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
+
+            if (updatedTrip is null)
+            {
+                return Result.Failure(TripErrors.NotFound(request.Id));
+            }
+
+            // Re-apply state changes to the fresh entity
+            TripStatus currentStatus = updatedTrip.Status;
+            updatedTrip.Status = request.NewStatus;
+            updatedTrip.UpdatedAt = DateTime.UtcNow;
+
+            if (request.NewStatus == TripStatus.InProgress && updatedTrip.ActualStartAt is null)
+            {
+                updatedTrip.ActualStartAt = DateTime.UtcNow;
+            }
+            else if (request.NewStatus == TripStatus.Completed && updatedTrip.ActualEndAt is null)
+            {
+                updatedTrip.ActualEndAt = DateTime.UtcNow;
+            }
+
+            updatedTrip.StatusHistory.Add(new TripStatusHistory
+            {
+                Id = Guid.NewGuid(),
+                TripId = updatedTrip.Id,
+                PreviousStatus = currentStatus,
+                NewStatus = request.NewStatus,
+                ChangedAt = DateTime.UtcNow,
+                Notes = request.Notes,
+                Source = request.Source,
+                ChangedByUserId = request.ChangedByUserId,
+                ChangedByDriverId = request.ChangedByDriverId
+            });
+
+            await _context.SaveChangesAsync(cancellationToken);
+        }
 
         return Result.Success();
     }

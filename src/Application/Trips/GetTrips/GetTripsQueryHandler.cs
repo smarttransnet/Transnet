@@ -33,6 +33,9 @@ internal sealed class GetTripsQueryHandler(IApplicationDbContext dbContext)
                 t.OfficeApprovedByUserId,
                 t.CreatedAt,
                 t.UpdatedAt,
+                null, // DriverName
+                null, // VehicleRegistrationNumber
+                null, // ClientName
                 null,
                 null,
                 null,
