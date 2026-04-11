@@ -40,27 +40,50 @@ internal sealed class GetTripByIdQueryHandler : IQueryHandler<GetTripByIdQuery, 
                 .FirstOrDefaultAsync(cancellationToken) ?? "System Administrator";
         }
 
+        string driverName = await _context.Users
+            .Where(u => u.Id == trip.DriverId)
+            .Select(u => u.FirstName + " " + u.LastName)
+            .FirstOrDefaultAsync(cancellationToken) ?? "Unknown Driver";
+
+        string vehicleReg = await _context.Vehicles
+            .Where(v => v.Id == trip.VehicleId)
+            .Select(v => v.RegistrationNumber)
+            .FirstOrDefaultAsync(cancellationToken) ?? "Unknown Vehicle";
+
+        string? clientName = null;
+        if (trip.ClientId.HasValue)
+        {
+            clientName = await _context.Clients
+                .Where(c => c.Id == trip.ClientId.Value)
+                .Select(c => c.CompanyName)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+
         TripResponse response = new(
-            trip.Id,
-            trip.TripNumber,
-            trip.DriverId,
-            trip.VehicleId,
-            trip.TrailerId,
-            trip.Status,
-            trip.ScheduledStartAt,
-            trip.ActualStartAt,
-            trip.ActualEndAt,
-            trip.TotalDistanceKm,
-            trip.IsImported,
-            trip.ImportBatchId,
-            trip.Origin,
-            trip.Destination,
-            trip.DriverConfirmedAt,
-            trip.OfficeApprovedAt,
-            trip.OfficeApprovedByUserId,
-            trip.CreatedAt,
-            trip.UpdatedAt,
-            trip.Stops.OrderBy(s => s.StopOrder).Select(s => new TripStopResponse(
+            Id: trip.Id,
+            TripNumber: trip.TripNumber,
+            DriverId: trip.DriverId,
+            VehicleId: trip.VehicleId,
+            TrailerId: trip.TrailerId,
+            Status: trip.Status,
+            ScheduledStartAt: trip.ScheduledStartAt,
+            ActualStartAt: trip.ActualStartAt,
+            ActualEndAt: trip.ActualEndAt,
+            TotalDistanceKm: trip.TotalDistanceKm,
+            IsImported: trip.IsImported,
+            ImportBatchId: trip.ImportBatchId,
+            Origin: trip.Origin,
+            Destination: trip.Destination,
+            DriverConfirmedAt: trip.DriverConfirmedAt,
+            OfficeApprovedAt: trip.OfficeApprovedAt,
+            OfficeApprovedByUserId: trip.OfficeApprovedByUserId,
+            CreatedAt: trip.CreatedAt,
+            UpdatedAt: trip.UpdatedAt,
+            DriverName: driverName,
+            VehicleRegistrationNumber: vehicleReg,
+            ClientName: clientName,
+            ResponseVersion: "v2-with-names", // Diagnostic flag
+            Stops: trip.Stops.OrderBy(s => s.StopOrder).Select(s => new TripStopResponse(
                 s.Id,
                 s.TripId,
                 s.StopOrder,
@@ -76,7 +99,7 @@ internal sealed class GetTripByIdQueryHandler : IQueryHandler<GetTripByIdQuery, 
                 s.ActualArrivalAt,
                 s.ActualDepartureAt,
                 s.Notes)).ToList(),
-            trip.Halts.OrderBy(h => h.StartedAt).Select(h => new TripHaltResponse(
+            Halts: trip.Halts.OrderBy(h => h.StartedAt).Select(h => new TripHaltResponse(
                 h.Id,
                 h.TripId,
                 h.HaltType,
@@ -88,7 +111,7 @@ internal sealed class GetTripByIdQueryHandler : IQueryHandler<GetTripByIdQuery, 
                 h.EndedAt,
                 h.DurationMinutes,
                 h.RecordedByDriverId)).ToList(),
-            trip.Voucher is null ? null : new TripVoucherResponse(
+            Voucher: trip.Voucher is null ? null : new TripVoucherResponse(
                 trip.Voucher.Id,
                 trip.Voucher.TripId,
                 trip.Voucher.VoucherNumber,
@@ -103,7 +126,7 @@ internal sealed class GetTripByIdQueryHandler : IQueryHandler<GetTripByIdQuery, 
                     cf.TripVoucherId,
                     cf.FieldDefinitionId,
                     cf.Value)).ToList()),
-            trip.PodUploads.OrderBy(p => p.UploadedAt).Select(p => new TripPodUploadResponse(
+            PodUploads: trip.PodUploads.OrderBy(p => p.UploadedAt).Select(p => new TripPodUploadResponse(
                 p.Id,
                 p.TripId,
                 p.TripStopId,

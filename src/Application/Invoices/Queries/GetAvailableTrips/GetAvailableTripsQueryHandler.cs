@@ -48,6 +48,9 @@ internal sealed class GetAvailableTripsQueryHandler(
                 t.OfficeApprovedByUserId,
                 t.CreatedAt,
                 t.UpdatedAt,
+                null, // DriverName
+                null, // VehicleRegistrationNumber
+                null, // ClientName
                 null, // Stops not needed for the selection list
                 null, // Halts not needed
                 null, // Voucher not needed
