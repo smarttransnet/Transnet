@@ -8,6 +8,8 @@ using Application.Invoices.Commands.RecordPayment;
 using Application.Invoices.Commands.LinkTripToInvoice;
 using Application.Invoices.Queries.GetInvoiceById;
 using Application.Invoices.Queries.GetInvoices;
+using Application.Invoices.Queries.GetAvailableTrips;
+using Application.Trips.Common;
 using Domain.Billing.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -123,6 +125,16 @@ internal sealed class InvoiceEndpoints : IEndpoint
             var command = new LinkTripToInvoiceCommand(id, request.TripId, request.LinkedByUserId);
             Result result = await handler.Handle(command, cancellationToken);
             return result.IsSuccess ? Results.NoContent() : CustomResults.Problem(result);
+        });
+
+        group.MapGet("available-trips", async (
+            Guid clientId,
+            IQueryHandler<GetAvailableTripsQuery, IReadOnlyList<TripResponse>> handler,
+            CancellationToken cancellationToken) =>
+        {
+            var query = new GetAvailableTripsQuery(clientId);
+            Result<IReadOnlyList<TripResponse>> result = await handler.Handle(query, cancellationToken);
+            return result.IsSuccess ? Results.Ok(result.Value) : CustomResults.Problem(result);
         });
     }
 }
