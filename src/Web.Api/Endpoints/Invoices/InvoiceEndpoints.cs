@@ -6,6 +6,7 @@ using Application.Invoices.Commands.IssueInvoice;
 using Application.Invoices.Commands.CancelInvoice;
 using Application.Invoices.Commands.RecordPayment;
 using Application.Invoices.Commands.LinkTripToInvoice;
+using Application.Invoices.Commands.CreateInvoiceFromTrips;
 using Application.Invoices.Queries.GetInvoiceById;
 using Application.Invoices.Queries.GetInvoices;
 using Application.Invoices.Queries.GetAvailableTrips;
@@ -136,6 +137,23 @@ internal sealed class InvoiceEndpoints : IEndpoint
             Result<IReadOnlyList<TripResponse>> result = await handler.Handle(query, cancellationToken);
             return result.IsSuccess ? Results.Ok(result.Value) : CustomResults.Problem(result);
         });
+
+        group.MapPost("from-trips", async (
+            CreateInvoiceFromTripsRequest request,
+            ICommandHandler<CreateInvoiceFromTripsCommand, Guid> handler,
+            CancellationToken cancellationToken) =>
+        {
+            var command = new CreateInvoiceFromTripsCommand(
+                request.ClientId,
+                request.TripIds,
+                request.UnitPricePerTrip,
+                request.DueDate,
+                request.Notes,
+                request.IssuedByUserId);
+
+            Result<Guid> result = await handler.Handle(command, cancellationToken);
+            return result.IsSuccess ? Results.Created($"/invoices/{result.Value}", result.Value) : CustomResults.Problem(result);
+        });
     }
 }
 
@@ -150,3 +168,11 @@ public record RecordPaymentRequest(
 public record LinkTripRequest(
     Guid TripId,
     Guid LinkedByUserId);
+
+public record CreateInvoiceFromTripsRequest(
+    Guid ClientId,
+    List<Guid> TripIds,
+    decimal UnitPricePerTrip,
+    DateTime DueDate,
+    string? Notes,
+    Guid IssuedByUserId);
