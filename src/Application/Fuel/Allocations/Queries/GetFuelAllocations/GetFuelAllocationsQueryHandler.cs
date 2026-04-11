@@ -34,16 +34,19 @@ internal sealed class GetFuelAllocationsQueryHandler(
         }
 
         List<FuelAllocationResponse> allocations = await query
+            .Include(a => a.Vehicle)
             .OrderByDescending(a => a.AllocationDate)
             .Select(a => new FuelAllocationResponse(
                 a.Id,
                 a.WoqoodFuelTransactionId,
                 a.DriverExpenseId,
                 a.VehicleId,
+                a.Vehicle != null ? a.Vehicle.PlateNumber : null,
                 a.TripId,
                 a.AllocationSource.ToString(),
                 a.QuantityLitres,
                 a.AmountQAR,
+                a.FuelType.ToString(),
                 a.AllocationDate,
                 a.Notes
             ))

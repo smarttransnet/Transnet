@@ -8,6 +8,7 @@ public sealed record UpdateFuelAllocationCommand(
     Guid? TripId,
     decimal QuantityLitres,
     decimal AmountQAR,
+    Domain.Fuel.Enums.FuelType FuelType,
     DateOnly AllocationDate,
     string? Notes,
     Guid UserId

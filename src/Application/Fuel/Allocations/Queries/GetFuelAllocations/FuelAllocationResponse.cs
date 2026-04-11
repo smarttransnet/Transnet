@@ -7,10 +7,12 @@ public sealed record FuelAllocationResponse(
     Guid? WoqoodFuelTransactionId,
     Guid? DriverExpenseId,
     Guid VehicleId,
+    string? VehiclePlate,
     Guid? TripId,
     string AllocationSource,
-    decimal QuantityLitres,
-    decimal AmountQAR,
-    DateOnly AllocationDate,
-    string? Notes
+    decimal Liters,
+    decimal Amount,
+    string FuelType,
+    DateOnly Date,
+    string? Remarks
 );

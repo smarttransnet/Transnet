@@ -16,6 +16,7 @@ public sealed class FuelCostAllocation : Entity
     public FuelAllocationSource AllocationSource { get; set; }
     public decimal QuantityLitres { get; set; }
     public decimal AmountQAR { get; set; }
+    public FuelType FuelType { get; set; }
     public DateOnly AllocationDate { get; set; }
     public Guid? AllocatedByUserId { get; set; }
     public string? Notes { get; set; }

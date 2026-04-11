@@ -8,7 +8,7 @@ using Web.Api.Infrastructure;
 namespace Web.Api.Endpoints.WoqoodCardMappings;
 
 public sealed record UpsertCardMappingRequest(
-    string WoqoodCardNumber,
+    string CardNumber,
     Guid? VehicleId,
     Guid? DriverId,
     string CardHolderName,
@@ -27,7 +27,7 @@ internal sealed class UpsertCardMapping : IEndpoint
             CancellationToken cancellationToken) =>
         {
             var command = new UpsertWoqoodCardMappingCommand(
-                request.WoqoodCardNumber,
+                request.CardNumber,
                 request.VehicleId,
                 request.DriverId,
                 request.CardHolderName,
