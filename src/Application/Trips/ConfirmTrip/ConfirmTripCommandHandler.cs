@@ -46,7 +46,7 @@ internal sealed class ConfirmTripCommandHandler : ICommandHandler<ConfirmTripCom
             ChangedAt = DateTime.UtcNow,
             Notes = "Driver confirmed trip completion.",
             Source = StatusChangeSource.DriverApp,
-            ChangedByDriverId = request.DriverId
+            ChangedByDriverId = trip.DriverId
         });
 
         await _context.SaveChangesAsync(cancellationToken);
