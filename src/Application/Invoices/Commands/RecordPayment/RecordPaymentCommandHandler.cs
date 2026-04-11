@@ -13,8 +13,9 @@ internal sealed class RecordPaymentCommandHandler(
 {
     public async Task<Result<Guid>> Handle(RecordPaymentCommand request, CancellationToken cancellationToken)
     {
+        // 1. Fetch the invoice. We don't necessarily need .Include(i => i.Payments) if we add to DbSet directly,
+        // which avoids common EF Core collection synchronization issues that lead to concurrency errors.
         Invoice? invoice = await dbContext.Invoices
-            .Include(i => i.Payments)
             .FirstOrDefaultAsync(i => i.Id == request.InvoiceId, cancellationToken);
 
         if (invoice is null)
@@ -27,6 +28,7 @@ internal sealed class RecordPaymentCommandHandler(
             return Result.Failure<Guid>(Error.Problem("Invoice.AlreadyPaid", "This invoice is already fully paid."));
         }
 
+        // 2. Create the payment record
         var payment = new InvoicePayment
         {
             Id = Guid.NewGuid(),
@@ -39,7 +41,9 @@ internal sealed class RecordPaymentCommandHandler(
             Notes = request.Notes
         };
 
-        invoice.Payments.Add(payment);
+        // 3. Add payment directly to the context and update invoice status
+        dbContext.InvoicePayments.Add(payment);
+
         invoice.PaidAmountQAR += request.AmountQAR;
         invoice.OutstandingAmountQAR -= request.AmountQAR;
 
@@ -53,8 +57,23 @@ internal sealed class RecordPaymentCommandHandler(
             invoice.Status = InvoiceStatus.PartiallyPaid;
         }
 
-        await dbContext.SaveChangesAsync(cancellationToken);
-
-        return payment.Id;
+        try
+        {
+            await dbContext.SaveChangesAsync(cancellationToken);
+            return payment.Id;
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            // If it fails with "0 rows affected", it's likely because the Invoice row 
+            // state changed or was deleted. We re-throw with more context if needed,
+            // or return a failure.
+            return Result.Failure<Guid>(Error.Problem("Invoice.ConcurrencyError", 
+                "The invoice was modified by another process. Please refresh and try again. " + ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<Guid>(Error.Failure("Invoice.PaymentError", 
+                "An unexpected error occurred while saving the payment: " + ex.Message));
+        }
     }
 }
