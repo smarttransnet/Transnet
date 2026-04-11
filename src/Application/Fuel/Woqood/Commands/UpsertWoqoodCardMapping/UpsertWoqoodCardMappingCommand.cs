@@ -8,5 +8,6 @@ public sealed record UpsertWoqoodCardMappingCommand(
     Guid? DriverId,
     string CardHolderName,
     string? Notes,
+    bool IsActive,
     Guid UserId
 ) : ICommand<Guid>;

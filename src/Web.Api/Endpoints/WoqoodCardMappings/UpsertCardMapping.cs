@@ -1,3 +1,4 @@
+using Application.Abstractions.Authentication;
 using Application.Abstractions.Messaging;
 using Application.Fuel.Woqood.Commands.UpsertWoqoodCardMapping;
 using SharedKernel;
@@ -11,7 +12,8 @@ public sealed record UpsertCardMappingRequest(
     Guid? VehicleId,
     Guid? DriverId,
     string CardHolderName,
-    string? Notes
+    string? Notes,
+    bool IsActive
 );
 
 internal sealed class UpsertCardMapping : IEndpoint
@@ -20,18 +22,18 @@ internal sealed class UpsertCardMapping : IEndpoint
     {
         app.MapPost("fuel/woqood/card-mappings", async (
             UpsertCardMappingRequest request,
+            IUserContext userContext,
             ICommandHandler<UpsertWoqoodCardMappingCommand, Guid> handler,
             CancellationToken cancellationToken) =>
         {
-            var mockUserId = Guid.NewGuid();
-
             var command = new UpsertWoqoodCardMappingCommand(
                 request.WoqoodCardNumber,
                 request.VehicleId,
                 request.DriverId,
                 request.CardHolderName,
                 request.Notes,
-                mockUserId
+                request.IsActive,
+                userContext.UserId
             );
 
             Result<Guid> result = await handler.Handle(command, cancellationToken);
