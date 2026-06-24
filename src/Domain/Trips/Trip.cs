@@ -26,9 +26,13 @@ public sealed class Trip : Entity
     public Guid? OfficeApprovedByUserId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+    public string? SuptNo { get; set; }
+    public string? SuptDocPath { get; set; }
+    public Guid? TripCategoryMaterialId { get; set; }
 
     // Navigation Properties
     public Client? Client { get; set; }
+    public TripCategoryMaterial? TripCategoryMaterial { get; set; }
     public ICollection<TripStop> Stops { get; set; } = new List<TripStop>();
     public ICollection<TripHalt> Halts { get; set; } = new List<TripHalt>();
     public TripVoucher? Voucher { get; set; }

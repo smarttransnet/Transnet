@@ -23,6 +23,9 @@ internal sealed class GetTripByIdQueryHandler : IQueryHandler<GetTripByIdQuery, 
             .Include(t => t.Halts)
             .Include(t => t.Voucher).ThenInclude(v => v!.CustomFields)
             .Include(t => t.PodUploads)
+            .Include(t => t.TripCategoryMaterial).ThenInclude(m => m!.TripCategory)
+            .Include(t => t.TripCategoryMaterial).ThenInclude(m => m!.Material)
+            .Include(t => t.TripCategoryMaterial).ThenInclude(m => m!.Uom)
             .AsNoTracking()
             .FirstOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
 
@@ -45,10 +48,14 @@ internal sealed class GetTripByIdQueryHandler : IQueryHandler<GetTripByIdQuery, 
             .Select(d => d.FirstName + " " + d.LastName)
             .FirstOrDefaultAsync(cancellationToken) ?? "Unknown Driver";
 
-        string vehicleReg = await _context.Vehicles
+        var vehicle = await _context.Vehicles
             .Where(v => v.Id == trip.VehicleId)
-            .Select(v => v.RegistrationNumber)
-            .FirstOrDefaultAsync(cancellationToken) ?? "Unknown Vehicle";
+            .Select(v => new { v.RegistrationNumber, v.PlateNumber, CategoryName = v.Category.Name })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        string vehicleReg = vehicle?.RegistrationNumber ?? "Unknown Vehicle";
+        string vehiclePlate = vehicle?.PlateNumber ?? "Unknown Plate";
+        string vehicleCategory = vehicle?.CategoryName ?? "Unknown Category";
 
         string? clientName = null;
         if (trip.ClientId.HasValue)
@@ -81,7 +88,16 @@ internal sealed class GetTripByIdQueryHandler : IQueryHandler<GetTripByIdQuery, 
             UpdatedAt: trip.UpdatedAt,
             DriverName: driverName,
             VehicleRegistrationNumber: vehicleReg,
+            VehiclePlateNumber: vehiclePlate,
+            VehicleCategoryName: vehicleCategory,
+            SuptNo: trip.SuptNo,
+            SuptDocPath: trip.SuptDocPath,
+            TripCategoryMaterialId: trip.TripCategoryMaterialId,
+            CategoryName: trip.TripCategoryMaterial?.TripCategory?.CategoryName,
+            MaterialName: trip.TripCategoryMaterial?.Material?.MaterialName,
+            UomCode: trip.TripCategoryMaterial?.Uom?.UOMCode,
             ClientName: clientName,
+            ClientId: trip.ClientId,
             ResponseVersion: "v2-with-names", // Diagnostic flag
             Stops: trip.Stops.OrderBy(s => s.StopOrder).Select(s => new TripStopResponse(
                 s.Id,

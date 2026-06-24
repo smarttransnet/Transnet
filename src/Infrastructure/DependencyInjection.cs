@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Application.Abstractions.Authentication;
 using Application.Abstractions.Data;
 using Infrastructure.Authentication;
@@ -46,7 +46,8 @@ public static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>(
             options => options
                 .UseNpgsql(connectionString, npgsqlOptions =>
-                    npgsqlOptions.MigrationsHistoryTable(HistoryRepository.DefaultTableName, Schemas.Default))
+                    npgsqlOptions.MigrationsHistoryTable(HistoryRepository.DefaultTableName, Schemas.Default)
+                    .MigrationsAssembly("Infrastructure"))
                 .UseSnakeCaseNamingConvention());
 
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());

@@ -1,4 +1,4 @@
-﻿using Domain.Assets;
+using Domain.Assets;
 using Domain.Drivers;
 using Domain.Inspections;
 using Domain.Todos;
@@ -85,6 +85,12 @@ public interface IApplicationDbContext
     DbSet<DriverGpsLog> DriverGpsLogs { get; }
     DbSet<DriverDocument> DriverDocuments { get; }
     DbSet<DriverNotification> DriverNotifications { get; }
+
+    // Trip Categories Module
+    DbSet<TripCategory> TripCategories { get; }
+    DbSet<Material> Materials { get; }
+    DbSet<Uom> Uoms { get; }
+    DbSet<TripCategoryMaterial> TripCategoryMaterials { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

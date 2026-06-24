@@ -8,4 +8,10 @@ public sealed record UpdateTripCommand(
     Guid VehicleId,
     Guid? TrailerId,
     DateTime ScheduledStartAt,
-    decimal? TotalDistanceKm) : ICommand;
+    decimal? TotalDistanceKm,
+    Guid? ClientId,
+    string Origin,
+    string Destination,
+    string? SuptNo = null,
+    string? SuptDocPath = null,
+    Guid? TripCategoryMaterialId = null) : ICommand;

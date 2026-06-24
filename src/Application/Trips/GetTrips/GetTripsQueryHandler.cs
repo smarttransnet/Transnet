@@ -35,11 +35,21 @@ internal sealed class GetTripsQueryHandler(IApplicationDbContext dbContext)
                 t.UpdatedAt,
                 null, // DriverName
                 null, // VehicleRegistrationNumber
-                null, // ClientName
+                t.Client != null ? t.Client.CompanyName : null, // ClientName
+                t.ClientId, // ClientId
                 null,
                 null,
                 null,
-                null))
+                null,
+                null,
+                null, // VehiclePlateNumber
+                null, // VehicleCategoryName
+                t.SuptNo, // SuptNo
+                t.SuptDocPath, // SuptDocPath
+                t.TripCategoryMaterialId, // TripCategoryMaterialId
+                t.TripCategoryMaterial != null && t.TripCategoryMaterial.TripCategory != null ? t.TripCategoryMaterial.TripCategory.CategoryName : null, // CategoryName
+                t.TripCategoryMaterial != null && t.TripCategoryMaterial.Material != null ? t.TripCategoryMaterial.Material.MaterialName : null, // MaterialName
+                t.TripCategoryMaterial != null && t.TripCategoryMaterial.Uom != null ? t.TripCategoryMaterial.Uom.UOMCode : null)) // UomCode
             .ToListAsync(cancellationToken);
 
         return trips;
