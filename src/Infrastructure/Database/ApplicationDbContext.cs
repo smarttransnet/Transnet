@@ -93,6 +93,12 @@ public sealed class ApplicationDbContext(
     public DbSet<OutstandingInvoiceSnapshot> OutstandingInvoiceSnapshots => Set<OutstandingInvoiceSnapshot>();
     public DbSet<InvoiceReminderLog> InvoiceReminderLogs => Set<InvoiceReminderLog>();
 
+    // Trip Categories Module
+    public DbSet<TripCategory> TripCategories { get; set; }
+    public DbSet<Material> Materials { get; set; }
+    public DbSet<Uom> Uoms { get; set; }
+    public DbSet<TripCategoryMaterial> TripCategoryMaterials { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);

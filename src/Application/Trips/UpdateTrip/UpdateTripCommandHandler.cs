@@ -25,11 +25,30 @@ internal sealed class UpdateTripCommandHandler : ICommandHandler<UpdateTripComma
             return Result.Failure(TripErrors.NotFound(request.Id));
         }
 
+        if (request.TripCategoryMaterialId.HasValue)
+        {
+            var mappingExists = await _context.TripCategoryMaterials
+                .AnyAsync(m => m.Id == request.TripCategoryMaterialId.Value && m.IsActive, cancellationToken);
+            if (!mappingExists)
+            {
+                return Result.Failure(Error.NotFound(
+                    "TripCategoryMaterial.NotFound",
+                    $"Trip category material mapping with ID '{request.TripCategoryMaterialId}' was not found."
+                ));
+            }
+        }
+
         trip.DriverId = request.DriverId;
         trip.VehicleId = request.VehicleId;
         trip.TrailerId = request.TrailerId;
+        trip.ClientId = request.ClientId;
+        trip.Origin = request.Origin ?? string.Empty;
+        trip.Destination = request.Destination ?? string.Empty;
         trip.ScheduledStartAt = DateTime.SpecifyKind(request.ScheduledStartAt, DateTimeKind.Utc);
         trip.TotalDistanceKm = request.TotalDistanceKm;
+        trip.SuptNo = request.SuptNo;
+        trip.SuptDocPath = request.SuptDocPath;
+        trip.TripCategoryMaterialId = request.TripCategoryMaterialId;
         trip.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync(cancellationToken);

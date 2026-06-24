@@ -15,6 +15,8 @@ internal sealed class TripConfiguration : IEntityTypeConfiguration<Trip>
         builder.Property(t => t.Origin).IsRequired().HasMaxLength(200);
         builder.Property(t => t.Destination).IsRequired().HasMaxLength(200);
         builder.Property(t => t.TotalDistanceKm).HasPrecision(18, 2);
+        builder.Property(t => t.SuptNo).HasMaxLength(100);
+        builder.Property(t => t.SuptDocPath).HasMaxLength(1000);
 
         builder.HasIndex(t => t.ClientId);
 
@@ -60,5 +62,12 @@ internal sealed class TripConfiguration : IEntityTypeConfiguration<Trip>
             .WithOne(cf => cf.Trip)
             .HasForeignKey(cf => cf.TripId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Property(t => t.TripCategoryMaterialId);
+
+        builder.HasOne(t => t.TripCategoryMaterial)
+            .WithMany()
+            .HasForeignKey(t => t.TripCategoryMaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

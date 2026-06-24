@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260622092817_TripCategoriesModule")]
+    partial class TripCategoriesModule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2828,10 +2831,6 @@ namespace Infrastructure.Database.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("trailer_id");
 
-                    b.Property<Guid?>("TripCategoryMaterialId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("trip_category_material_id");
-
                     b.Property<string>("TripNumber")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -2854,9 +2853,6 @@ namespace Infrastructure.Database.Migrations
 
                     b.HasIndex("ImportBatchId")
                         .HasDatabaseName("ix_trips_import_batch_id");
-
-                    b.HasIndex("TripCategoryMaterialId")
-                        .HasDatabaseName("ix_trips_trip_category_material_id");
 
                     b.ToTable("trips", "public");
                 });
@@ -4070,15 +4066,7 @@ namespace Infrastructure.Database.Migrations
                         .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_trips_import_batches_import_batch_id");
 
-                    b.HasOne("Domain.Trips.TripCategoryMaterial", "TripCategoryMaterial")
-                        .WithMany()
-                        .HasForeignKey("TripCategoryMaterialId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_trips_trip_category_materials_trip_category_material_id");
-
                     b.Navigation("Client");
-
-                    b.Navigation("TripCategoryMaterial");
                 });
 
             modelBuilder.Entity("Domain.Trips.TripCategoryMaterial", b =>

@@ -15,4 +15,5 @@ public sealed record VehicleResponse(
     Guid? CurrentDriverId,
     Guid? CurrentLocationId,
     decimal OdometerReading,
-    bool IsActive);
+    bool IsActive,
+    string CategoryName);

@@ -26,7 +26,8 @@ internal sealed class GetVehiclesQueryHandler(IApplicationDbContext dbContext)
                 v.CurrentDriverId,
                 v.CurrentLocationId,
                 v.OdometerReading,
-                v.IsActive))
+                v.IsActive,
+                v.Category.Name))
             .ToListAsync(cancellationToken);
 
         return vehicles;

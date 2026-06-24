@@ -25,7 +25,13 @@ public sealed class UpdateTrip : IEndpoint
                 request.VehicleId,
                 request.TrailerId,
                 request.ScheduledStartAt,
-                request.TotalDistanceKm);
+                request.TotalDistanceKm,
+                request.ClientId,
+                request.Origin,
+                request.Destination,
+                request.SuptNo,
+                request.SuptDocPath,
+                request.TripCategoryMaterialId);
 
             Result result = await handler.Handle(command, cancellationToken);
 
@@ -40,4 +46,10 @@ public sealed record UpdateTripRequest(
     Guid VehicleId,
     Guid? TrailerId,
     DateTime ScheduledStartAt,
-    decimal? TotalDistanceKm);
+    decimal? TotalDistanceKm,
+    Guid? ClientId,
+    string Origin,
+    string Destination,
+    string? SuptNo = null,
+    string? SuptDocPath = null,
+    Guid? TripCategoryMaterialId = null);

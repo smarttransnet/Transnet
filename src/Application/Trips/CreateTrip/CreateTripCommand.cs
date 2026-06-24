@@ -8,4 +8,10 @@ public sealed record CreateTripCommand(
     Guid DriverId,
     Guid VehicleId,
     Guid? TrailerId,
-    DateTime ScheduledStartAt) : ICommand<Guid>;
+    DateTime ScheduledStartAt,
+    Guid? ClientId,
+    string Origin,
+    string Destination,
+    string? SuptNo = null,
+    string? SuptDocPath = null,
+    Guid? TripCategoryMaterialId = null) : ICommand<Guid>;

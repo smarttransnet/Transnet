@@ -27,7 +27,8 @@ internal sealed class GetVehicleByIdQueryHandler(IApplicationDbContext dbContext
                 v.CurrentDriverId,
                 v.CurrentLocationId,
                 v.OdometerReading,
-                v.IsActive))
+                v.IsActive,
+                v.Category.Name))
             .SingleOrDefaultAsync(cancellationToken);
 
         if (vehicle is null)
