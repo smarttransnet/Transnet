@@ -16,12 +16,16 @@ internal sealed class RecordPaymentCommandHandler(
         // 1. Fetch the invoice. We don't necessarily need .Include(i => i.Payments) if we add to DbSet directly,
         // which avoids common EF Core collection synchronization issues that lead to concurrency errors.
         Invoice? invoice = await dbContext.Invoices
+            .Include(i => i.Payments)
             .FirstOrDefaultAsync(i => i.Id == request.InvoiceId, cancellationToken);
 
         if (invoice is null)
         {
             return Result.Failure<Guid>(Error.NotFound("Invoice.NotFound", "The specified invoice was not found."));
         }
+
+        // Initialize collection if EF materialization somehow resulted in null
+        invoice.Payments ??= new List<InvoicePayment>();
 
         if (invoice.OutstandingAmountQAR <= 0)
         {
