@@ -17,8 +17,6 @@ internal sealed class GetInspectionChecklistsQueryHandler(IApplicationDbContext 
                 c.Id,
                 c.Name,
                 c.VehicleCategoryId,
-                c.InspectionType,
-                c.ApplicableVehicleTypes,
                 c.IsActive,
                 c.Items.Select(i => new ChecklistItemResponse(
                     i.Id,

@@ -13,7 +13,7 @@ internal sealed class SubmitInspectionCommandHandler(
 {
     public async Task<Result<Guid>> Handle(SubmitInspectionCommand request, CancellationToken cancellationToken)
     {
-        InspectionStatus status = request.InspectionResults.Any(r => !r.IsPassed) ? InspectionStatus.ActionRequired : InspectionStatus.Submitted;
+        InspectionStatus status = request.InspectionResults.Any(r => r.Status == "Faulty") ? InspectionStatus.ActionRequired : InspectionStatus.Submitted;
         DateTime now = dateTimeProvider.UtcNow;
 
         var inspection = new VehicleInspection
@@ -34,7 +34,7 @@ internal sealed class SubmitInspectionCommandHandler(
             {
                 Id = Guid.NewGuid(),
                 ChecklistItemId = r.ChecklistItemId,
-                IsPassed = r.IsPassed,
+                Status = r.Status,
                 Remarks = r.Remarks,
                 RecordedAt = now
             }).ToList()

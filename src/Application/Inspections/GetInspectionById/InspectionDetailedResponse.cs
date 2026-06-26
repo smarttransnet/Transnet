@@ -7,7 +7,7 @@ public sealed record InspectionResultResponse(
     Guid Id,
     Guid ChecklistItemId,
     string ItemName,
-    bool IsPassed,
+    string Status,
     string? Remarks);
 
 public sealed record InspectionPhotoResponse(

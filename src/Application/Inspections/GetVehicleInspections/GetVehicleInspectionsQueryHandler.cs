@@ -31,7 +31,7 @@ internal sealed class GetVehicleInspectionsQueryHandler(IApplicationDbContext db
                 i.Status,
                 i.InspectionResults.Select(r => new InspectionResultResponse(
                     r.ChecklistItemId,
-                    r.IsPassed,
+                    r.Status,
                     r.Remarks,
                     r.RecordedAt)).ToList()))
             .ToListAsync(cancellationToken);

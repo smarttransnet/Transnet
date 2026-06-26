@@ -8,6 +8,7 @@ public static class Tags
     public const string VehicleCategories = "VehicleCategories";
     public const string Trailers = "Trailers";
     public const string InspectionChecklists = "InspectionChecklists";
+    public const string InspectionCatalogItems = "InspectionCatalogItems";
     public const string Inspections = "Inspections";
     public const string WorkOrders = "WorkOrders";
     public const string AssetLocations = "AssetLocations";
