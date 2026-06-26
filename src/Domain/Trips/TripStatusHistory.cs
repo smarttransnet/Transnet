@@ -13,6 +13,7 @@ public sealed class TripStatusHistory : Entity
     public Guid? ChangedByDriverId { get; set; }
     public DateTime ChangedAt { get; set; }
     public string? Notes { get; set; }
+    public string? AttachmentUrl { get; set; }
     public StatusChangeSource Source { get; set; }
 
     public Trip Trip { get; set; }

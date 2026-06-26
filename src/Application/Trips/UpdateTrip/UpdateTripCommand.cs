@@ -12,6 +12,5 @@ public sealed record UpdateTripCommand(
     Guid? ClientId,
     string Origin,
     string Destination,
-    string? SuptNo = null,
-    string? SuptDocPath = null,
-    Guid? TripCategoryMaterialId = null) : ICommand;
+    Guid? TripCategoryMaterialId = null,
+    decimal? Quantity = null) : ICommand;

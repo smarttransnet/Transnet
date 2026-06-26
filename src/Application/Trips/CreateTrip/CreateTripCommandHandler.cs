@@ -25,6 +25,14 @@ internal sealed class CreateTripCommandHandler(
                     $"Trip category material mapping with ID '{request.TripCategoryMaterialId}' was not found."
                 ));
             }
+
+            if (!request.Quantity.HasValue || request.Quantity.Value <= 0)
+            {
+                return Result.Failure<Guid>(Error.Problem(
+                    "Trip.QuantityRequired",
+                    "Quantity is required and must be greater than 0 when Trip Category, Material, and UOM are selected."
+                ));
+            }
         }
 
         var trip = new Trip
@@ -42,9 +50,8 @@ internal sealed class CreateTripCommandHandler(
             CreatedAt = dateTimeProvider.UtcNow,
             UpdatedAt = dateTimeProvider.UtcNow,
             IsImported = false,
-            SuptNo = request.SuptNo,
-            SuptDocPath = request.SuptDocPath,
-            TripCategoryMaterialId = request.TripCategoryMaterialId
+            TripCategoryMaterialId = request.TripCategoryMaterialId,
+            Quantity = request.Quantity
         };
 
         dbContext.Trips.Add(trip);

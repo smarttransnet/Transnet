@@ -12,6 +12,5 @@ public sealed record CreateTripCommand(
     Guid? ClientId,
     string Origin,
     string Destination,
-    string? SuptNo = null,
-    string? SuptDocPath = null,
-    Guid? TripCategoryMaterialId = null) : ICommand<Guid>;
+    Guid? TripCategoryMaterialId = null,
+    decimal? Quantity = null) : ICommand<Guid>;

@@ -57,14 +57,8 @@ public sealed class ApplicationDbContext(
 
     // Trips
     public DbSet<Trip> Trips { get; set; }
-    public DbSet<TripStop> TripStops { get; set; }
-    public DbSet<TripHalt> TripHalts { get; set; }
-    public DbSet<TripVoucher> TripVouchers { get; set; }
-    public DbSet<TripPodUpload> TripPodUploads { get; set; }
     public DbSet<TripStatusHistory> TripStatusHistories { get; set; }
     public DbSet<ImportBatch> ImportBatches { get; set; }
-    public DbSet<CustomFieldDefinition> CustomFieldDefinitions { get; set; }
-    public DbSet<TripCustomField> TripCustomFields { get; set; }
 
     // Module 04: Fuel & Cost Tracking
     public DbSet<WoqoodImportBatch> WoqoodImportBatches => Set<WoqoodImportBatch>();

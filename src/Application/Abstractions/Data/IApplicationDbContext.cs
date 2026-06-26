@@ -39,14 +39,8 @@ public interface IApplicationDbContext
 
     // Trips
     DbSet<Trip> Trips { get; }
-    DbSet<TripStop> TripStops { get; }
-    DbSet<TripHalt> TripHalts { get; }
-    DbSet<TripVoucher> TripVouchers { get; }
-    DbSet<TripPodUpload> TripPodUploads { get; }
     DbSet<TripStatusHistory> TripStatusHistories { get; }
     DbSet<ImportBatch> ImportBatches { get; }
-    DbSet<CustomFieldDefinition> CustomFieldDefinitions { get; }
-    DbSet<TripCustomField> TripCustomFields { get; }
 
     // Module 04: Fuel & Cost Tracking
     DbSet<WoqoodImportBatch> WoqoodImportBatches { get; }
