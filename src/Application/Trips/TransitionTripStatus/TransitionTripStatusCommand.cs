@@ -9,4 +9,6 @@ public sealed record TransitionTripStatusCommand(
     string? Notes,
     StatusChangeSource Source,
     Guid? ChangedByUserId,
-    Guid? ChangedByDriverId) : ICommand;
+    Guid? ChangedByDriverId,
+    Stream? PhotoStream = null,
+    string? PhotoFileName = null) : ICommand;

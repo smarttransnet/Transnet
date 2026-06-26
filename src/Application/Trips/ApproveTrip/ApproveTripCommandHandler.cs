@@ -27,23 +27,23 @@ internal sealed class ApproveTripCommandHandler : ICommandHandler<ApproveTripCom
             return Result.Failure(TripErrors.NotFound(request.Id));
         }
 
-        if (trip.Status != TripStatus.PendingOfficeApproval && trip.Status != TripStatus.Completed)
+        if (trip.Status != TripStatus.PendingOfficeApproval)
         {
-            return Result.Failure(Error.Problem("Trip.InvalidStatus", "Trip must be in PendingOfficeApproval or Completed status to be approved."));
+            return Result.Failure(Error.Problem("Trip.InvalidStatus", "Trip must be in PendingOfficeApproval status to be approved."));
         }
 
         TripStatus previousStatus = trip.Status;
-        trip.Status = TripStatus.Invoiced; // Or a status that signifies it's ready for next steps
+        trip.Status = TripStatus.Completed;
+        trip.ActualEndAt ??= DateTime.UtcNow;
         trip.OfficeApprovedAt = DateTime.UtcNow;
         trip.OfficeApprovedByUserId = request.UserId;
         trip.UpdatedAt = DateTime.UtcNow;
 
         trip.StatusHistory.Add(new TripStatusHistory
         {
-            Id = Guid.NewGuid(),
             TripId = trip.Id,
             PreviousStatus = previousStatus,
-            NewStatus = TripStatus.Invoiced,
+            NewStatus = TripStatus.Completed,
             ChangedAt = DateTime.UtcNow,
             Notes = "Office approved trip.",
             Source = StatusChangeSource.OfficePortal,

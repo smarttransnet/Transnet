@@ -29,9 +29,8 @@ public sealed class UpdateTrip : IEndpoint
                 request.ClientId,
                 request.Origin,
                 request.Destination,
-                request.SuptNo,
-                request.SuptDocPath,
-                request.TripCategoryMaterialId);
+                request.TripCategoryMaterialId,
+                request.Quantity);
 
             Result result = await handler.Handle(command, cancellationToken);
 
@@ -50,6 +49,5 @@ public sealed record UpdateTripRequest(
     Guid? ClientId,
     string Origin,
     string Destination,
-    string? SuptNo = null,
-    string? SuptDocPath = null,
-    Guid? TripCategoryMaterialId = null);
+    Guid? TripCategoryMaterialId = null,
+    decimal? Quantity = null);

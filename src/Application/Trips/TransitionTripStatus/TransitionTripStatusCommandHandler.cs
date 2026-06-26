@@ -78,6 +78,13 @@ internal sealed class TransitionTripStatusCommandHandler : ICommandHandler<Trans
             trip.ActualEndAt = DateTime.UtcNow;
         }
 
+        string? attachmentUrl = null;
+        if (request.PhotoStream is not null && !string.IsNullOrWhiteSpace(request.PhotoFileName))
+        {
+            // In a real app, upload to blob storage
+            attachmentUrl = $"/uploads/trips/{trip.Id}/status/{request.PhotoFileName}";
+        }
+
         // Record history
         trip.StatusHistory.Add(new TripStatusHistory
         {
@@ -86,6 +93,7 @@ internal sealed class TransitionTripStatusCommandHandler : ICommandHandler<Trans
             NewStatus = request.NewStatus,
             ChangedAt = DateTime.UtcNow,
             Notes = request.Notes,
+            AttachmentUrl = attachmentUrl,
             Source = request.Source,
             ChangedByUserId = request.ChangedByUserId,
             ChangedByDriverId = request.ChangedByDriverId

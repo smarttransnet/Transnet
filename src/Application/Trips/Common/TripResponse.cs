@@ -27,15 +27,12 @@ public sealed record TripResponse(
     string? ClientName = null,
     Guid? ClientId = null,
     string? ResponseVersion = null,
-    List<TripStopResponse>? Stops = null,
-    List<TripHaltResponse>? Halts = null,
-    TripVoucherResponse? Voucher = null,
-    List<TripPodUploadResponse>? PodUploads = null,
+
     string? VehiclePlateNumber = null,
     string? VehicleCategoryName = null,
-    string? SuptNo = null,
-    string? SuptDocPath = null,
     Guid? TripCategoryMaterialId = null,
     string? CategoryName = null,
     string? MaterialName = null,
-    string? UomCode = null);
+    string? UomCode = null,
+    decimal? Quantity = null,
+    List<TripStatusHistoryResponse>? StatusHistory = null);

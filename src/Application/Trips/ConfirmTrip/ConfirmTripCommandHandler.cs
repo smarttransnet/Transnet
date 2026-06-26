@@ -39,7 +39,6 @@ internal sealed class ConfirmTripCommandHandler : ICommandHandler<ConfirmTripCom
 
         trip.StatusHistory.Add(new TripStatusHistory
         {
-            Id = Guid.NewGuid(),
             TripId = trip.Id,
             PreviousStatus = previousStatus,
             NewStatus = TripStatus.PendingOfficeApproval,

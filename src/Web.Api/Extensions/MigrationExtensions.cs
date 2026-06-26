@@ -19,6 +19,36 @@ public static class MigrationExtensions
         dbContext.Database.Migrate();
 
         dbContext.SeedTripCategories();
+
+        var passwordHasher = scope.ServiceProvider.GetRequiredService<Application.Abstractions.Authentication.IPasswordHasher>();
+
+        if (!dbContext.Users.Any(u => u.Email == "admin@transnet.com"))
+        {
+            var user = new Domain.Users.User
+            {
+                Id = Guid.NewGuid(),
+                Email = "admin@transnet.com",
+                FirstName = "System",
+                LastName = "Administrator",
+                PasswordHash = passwordHasher.Hash("admin")
+            };
+            dbContext.Users.Add(user);
+        }
+
+        if (!dbContext.Users.Any(u => u.Email == "test@test.com"))
+        {
+            var user = new Domain.Users.User
+            {
+                Id = Guid.NewGuid(),
+                Email = "test@test.com",
+                FirstName = "Test",
+                LastName = "User",
+                PasswordHash = passwordHasher.Hash("12121212")
+            };
+            dbContext.Users.Add(user);
+        }
+
+        dbContext.SaveChanges();
     }
 
     private static void SeedTripCategories(this ApplicationDbContext dbContext)

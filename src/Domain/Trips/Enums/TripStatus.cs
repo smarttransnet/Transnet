@@ -9,5 +9,6 @@ public enum TripStatus
     PendingDriverConfirmation = 5,
     PendingOfficeApproval = 6,
     Cancelled = 7,
-    Invoiced = 8
+    Invoiced = 8,
+    Deleted = 9
 }

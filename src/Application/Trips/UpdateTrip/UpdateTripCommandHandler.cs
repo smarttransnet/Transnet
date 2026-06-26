@@ -36,6 +36,14 @@ internal sealed class UpdateTripCommandHandler : ICommandHandler<UpdateTripComma
                     $"Trip category material mapping with ID '{request.TripCategoryMaterialId}' was not found."
                 ));
             }
+
+            if (!request.Quantity.HasValue || request.Quantity.Value <= 0)
+            {
+                return Result.Failure(Error.Problem(
+                    "Trip.QuantityRequired",
+                    "Quantity is required and must be greater than 0 when Trip Category, Material, and UOM are selected."
+                ));
+            }
         }
 
         trip.DriverId = request.DriverId;
@@ -46,9 +54,8 @@ internal sealed class UpdateTripCommandHandler : ICommandHandler<UpdateTripComma
         trip.Destination = request.Destination ?? string.Empty;
         trip.ScheduledStartAt = DateTime.SpecifyKind(request.ScheduledStartAt, DateTimeKind.Utc);
         trip.TotalDistanceKm = request.TotalDistanceKm;
-        trip.SuptNo = request.SuptNo;
-        trip.SuptDocPath = request.SuptDocPath;
         trip.TripCategoryMaterialId = request.TripCategoryMaterialId;
+        trip.Quantity = request.Quantity;
         trip.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync(cancellationToken);

@@ -19,7 +19,18 @@ internal sealed class DeleteTripCommandHandler(IApplicationDbContext dbContext)
             return Result.Failure(Error.NotFound("Trip.NotFound", "The trip was not found."));
         }
 
-        dbContext.Trips.Remove(trip);
+        bool hasInvoices = await dbContext.InvoiceTripLinks
+            .AnyAsync(link => link.TripId == trip.Id, cancellationToken);
+
+        if (hasInvoices)
+        {
+            trip.Status = Domain.Trips.Enums.TripStatus.Deleted;
+            trip.UpdatedAt = DateTime.UtcNow;
+        }
+        else
+        {
+            dbContext.Trips.Remove(trip);
+        }
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

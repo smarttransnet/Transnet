@@ -15,8 +15,6 @@ internal sealed class TripConfiguration : IEntityTypeConfiguration<Trip>
         builder.Property(t => t.Origin).IsRequired().HasMaxLength(200);
         builder.Property(t => t.Destination).IsRequired().HasMaxLength(200);
         builder.Property(t => t.TotalDistanceKm).HasPrecision(18, 2);
-        builder.Property(t => t.SuptNo).HasMaxLength(100);
-        builder.Property(t => t.SuptDocPath).HasMaxLength(1000);
 
         builder.HasIndex(t => t.ClientId);
 
@@ -33,37 +31,17 @@ internal sealed class TripConfiguration : IEntityTypeConfiguration<Trip>
         builder.Property(t => t.CreatedAt).HasConversion(d => DateTime.SpecifyKind(d, DateTimeKind.Utc), v => v);
         builder.Property(t => t.UpdatedAt).HasConversion(d => DateTime.SpecifyKind(d, DateTimeKind.Utc), v => v);
 
-        builder.HasMany(t => t.Stops)
-            .WithOne(s => s.Trip)
-            .HasForeignKey(s => s.TripId)
-            .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(t => t.Halts)
-            .WithOne(h => h.Trip)
-            .HasForeignKey(h => h.TripId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasOne(t => t.Voucher)
-            .WithOne(v => v.Trip)
-            .HasForeignKey<TripVoucher>(v => v.TripId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasMany(t => t.PodUploads)
-            .WithOne(p => p.Trip)
-            .HasForeignKey(p => p.TripId)
-            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(t => t.StatusHistory)
             .WithOne(sh => sh.Trip)
             .HasForeignKey(sh => sh.TripId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(t => t.CustomFields)
-            .WithOne(cf => cf.Trip)
-            .HasForeignKey(cf => cf.TripId)
-            .OnDelete(DeleteBehavior.Cascade);
+
 
         builder.Property(t => t.TripCategoryMaterialId);
+        builder.Property(t => t.Quantity).HasPrecision(18, 2);
 
         builder.HasOne(t => t.TripCategoryMaterial)
             .WithMany()

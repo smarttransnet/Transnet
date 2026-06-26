@@ -13,6 +13,7 @@ internal sealed class GetTripsQueryHandler(IApplicationDbContext dbContext)
     {
         List<TripResponse> trips = await dbContext.Trips
             .AsNoTracking()
+            .Where(t => t.Status != Domain.Trips.Enums.TripStatus.Deleted)
             .Select(t => new TripResponse(
                 t.Id,
                 t.TripNumber,
@@ -38,18 +39,14 @@ internal sealed class GetTripsQueryHandler(IApplicationDbContext dbContext)
                 t.Client != null ? t.Client.CompanyName : null, // ClientName
                 t.ClientId, // ClientId
                 null,
-                null,
-                null,
-                null,
-                null,
+
                 null, // VehiclePlateNumber
                 null, // VehicleCategoryName
-                t.SuptNo, // SuptNo
-                t.SuptDocPath, // SuptDocPath
                 t.TripCategoryMaterialId, // TripCategoryMaterialId
                 t.TripCategoryMaterial != null && t.TripCategoryMaterial.TripCategory != null ? t.TripCategoryMaterial.TripCategory.CategoryName : null, // CategoryName
                 t.TripCategoryMaterial != null && t.TripCategoryMaterial.Material != null ? t.TripCategoryMaterial.Material.MaterialName : null, // MaterialName
-                t.TripCategoryMaterial != null && t.TripCategoryMaterial.Uom != null ? t.TripCategoryMaterial.Uom.UOMCode : null)) // UomCode
+                t.TripCategoryMaterial != null && t.TripCategoryMaterial.Uom != null ? t.TripCategoryMaterial.Uom.UOMCode : null, // UomCode
+                t.Quantity)) // Quantity
             .ToListAsync(cancellationToken);
 
         return trips;
