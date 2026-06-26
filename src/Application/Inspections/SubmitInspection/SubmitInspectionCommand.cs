@@ -5,7 +5,7 @@ namespace Application.Inspections.SubmitInspection;
 
 public sealed record SubmitInspectionResultCommand(
     Guid ChecklistItemId,
-    bool IsPassed,
+    string Status,
     string? Remarks);
 
 public sealed record SubmitInspectionCommand(

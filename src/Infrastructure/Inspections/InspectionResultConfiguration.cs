@@ -10,6 +10,7 @@ internal sealed class InspectionResultConfiguration : IEntityTypeConfiguration<I
     {
         builder.HasKey(r => r.Id);
         
+        builder.Property(r => r.Status).IsRequired().HasMaxLength(50);
         builder.Property(r => r.Remarks).HasMaxLength(500);
 
         builder.Property(r => r.RecordedAt).HasConversion(d => DateTime.SpecifyKind(d, DateTimeKind.Utc), v => v);

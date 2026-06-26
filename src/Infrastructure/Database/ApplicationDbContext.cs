@@ -49,6 +49,7 @@ public sealed class ApplicationDbContext(
     public DbSet<VehicleInspection> VehicleInspections { get; set; }
     public DbSet<InspectionResult> InspectionResults { get; set; }
     public DbSet<InspectionPhoto> InspectionPhotos { get; set; }
+    public DbSet<InspectionCatalogItem> InspectionCatalogItems { get; set; }
 
     // Work Orders
     public DbSet<WorkOrder> WorkOrders { get; set; }

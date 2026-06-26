@@ -31,6 +31,7 @@ public interface IApplicationDbContext
     DbSet<VehicleInspection> VehicleInspections { get; }
     DbSet<InspectionResult> InspectionResults { get; }
     DbSet<InspectionPhoto> InspectionPhotos { get; }
+    DbSet<InspectionCatalogItem> InspectionCatalogItems { get; }
 
     // Work Orders
     DbSet<WorkOrder> WorkOrders { get; }

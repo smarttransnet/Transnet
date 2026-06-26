@@ -4,7 +4,7 @@ namespace Application.Inspections.GetVehicleInspections;
 
 public sealed record InspectionResultResponse(
     Guid ChecklistItemId,
-    bool IsPassed,
+    string Status,
     string? Remarks,
     DateTime RecordedAt);
 

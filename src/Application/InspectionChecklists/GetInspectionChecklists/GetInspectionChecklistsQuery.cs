@@ -14,8 +14,6 @@ public sealed record InspectionChecklistResponse(
     Guid Id,
     string Name,
     Guid? VehicleCategoryId,
-    InspectionType InspectionType,
-    string ApplicableVehicleTypes,
     bool IsActive,
     List<ChecklistItemResponse> Items);
 

@@ -11,7 +11,6 @@ internal sealed class InspectionChecklistConfiguration : IEntityTypeConfiguratio
         builder.HasKey(c => c.Id);
         
         builder.Property(c => c.Name).IsRequired().HasMaxLength(200);
-        builder.Property(c => c.ApplicableVehicleTypes).HasMaxLength(500);
 
         builder.Property(c => c.CreatedAt).HasConversion(d => DateTime.SpecifyKind(d, DateTimeKind.Utc), v => v);
 
