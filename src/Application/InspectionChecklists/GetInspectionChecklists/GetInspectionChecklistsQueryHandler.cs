@@ -12,7 +12,6 @@ internal sealed class GetInspectionChecklistsQueryHandler(IApplicationDbContext 
     {
         List<InspectionChecklistResponse> checklists = await dbContext.InspectionChecklists
             .AsNoTracking()
-            .Include(c => c.Items)
             .Select(c => new InspectionChecklistResponse(
                 c.Id,
                 c.Name,

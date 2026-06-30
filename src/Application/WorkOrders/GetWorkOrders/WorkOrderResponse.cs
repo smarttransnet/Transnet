@@ -8,7 +8,11 @@ public sealed record WorkOrderItemResponse(
     string Description,
     decimal Quantity,
     decimal UnitCostQAR,
-    decimal TotalCostQAR);
+    decimal TotalCostQAR,
+    DateTime? StartTime,
+    DateTime? EndTime,
+    string? MechanicName,
+    string? Remarks);
 
 public sealed record WorkOrderStatusHistoryResponse(
     Guid Id,
@@ -34,5 +38,11 @@ public sealed record WorkOrderResponse(
     DateTime? ScheduledDate,
     DateTime? StartedAt,
     DateTime? CompletedAt,
+    int? JobType,
+    string? DriverName,
+    string? PreparedBy,
+    string? CheckedByDriver,
+    string? CheckedByMechanic,
+    string? AuthorizedBy,
     List<WorkOrderItemResponse> Items,
     List<WorkOrderStatusHistoryResponse> History);

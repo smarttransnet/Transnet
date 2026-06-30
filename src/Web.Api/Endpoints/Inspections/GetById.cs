@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using MediatR;
-using Microsoft.AspNetCore.Http;
 using Application.Abstractions.Messaging;
+using Microsoft.AspNetCore.Http;
 using Application.Inspections.GetInspectionById;
 using SharedKernel;
 using Web.Api.Extensions;
@@ -15,10 +14,10 @@ internal sealed class GetById : IEndpoint
     {
         app.MapGet("inspections/{id}", async (
             Guid id,
-            [FromServices] ISender sender,
+            [FromServices] IQueryHandler<GetInspectionByIdQuery, InspectionDetailedResponse> handler,
             CancellationToken cancellationToken) =>
         {
-            Result<InspectionDetailedResponse> result = await sender.Send(new GetInspectionByIdQuery(id), cancellationToken);
+            Result<InspectionDetailedResponse> result = await handler.Handle(new GetInspectionByIdQuery(id), cancellationToken);
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })

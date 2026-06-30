@@ -24,8 +24,7 @@ internal sealed class SignInspectionCommandHandler(IApplicationDbContext context
 
         inspection.DriverSignature = command.SignatureData;
         inspection.DriverSignedAt = command.SignedAt;
-        // Optionally update status to Completed if it was Pending
-        // inspection.Status = InspectionStatus.Completed;
+        inspection.Status = Domain.Inspections.Enums.InspectionStatus.Submitted;
 
         await context.SaveChangesAsync(cancellationToken);
 
