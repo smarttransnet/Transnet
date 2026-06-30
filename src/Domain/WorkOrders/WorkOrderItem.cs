@@ -13,5 +13,10 @@ public sealed class WorkOrderItem : Entity
     public decimal UnitCostQAR { get; set; }
     public decimal TotalCostQAR { get; set; }
 
+    public DateTime? StartTime { get; set; }
+    public DateTime? EndTime { get; set; }
+    public string? MechanicName { get; set; }
+    public string? Remarks { get; set; }
+
     public WorkOrder WorkOrder { get; set; }
 }

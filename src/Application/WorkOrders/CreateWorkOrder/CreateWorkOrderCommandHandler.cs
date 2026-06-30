@@ -30,6 +30,14 @@ internal sealed class CreateWorkOrderCommandHandler(
             AssignedTechnicianId = request.AssignedTechnicianId,
             EstimatedCostQAR = request.EstimatedCostQAR,
             ScheduledDate = request.ScheduledDate,
+            JobType = request.JobType,
+            DriverName = request.DriverName,
+            PreparedBy = request.PreparedBy,
+            CheckedByDriver = request.CheckedByDriver,
+            CheckedByMechanic = request.CheckedByMechanic,
+            AuthorizedBy = request.AuthorizedBy,
+            StartedAt = request.StartedAt,
+            CompletedAt = request.CompletedAt,
             WorkOrderItems = request.Items.Select(i => new WorkOrderItem
             {
                 Id = Guid.NewGuid(),
@@ -37,7 +45,11 @@ internal sealed class CreateWorkOrderCommandHandler(
                 Description = i.Description,
                 Quantity = i.Quantity,
                 UnitCostQAR = i.UnitCostQAR,
-                TotalCostQAR = i.Quantity * i.UnitCostQAR
+                TotalCostQAR = i.Quantity * i.UnitCostQAR,
+                StartTime = i.StartTime,
+                EndTime = i.EndTime,
+                MechanicName = i.MechanicName,
+                Remarks = i.Remarks
             }).ToList(),
             StatusHistory = new List<WorkOrderStatusHistory>
             {

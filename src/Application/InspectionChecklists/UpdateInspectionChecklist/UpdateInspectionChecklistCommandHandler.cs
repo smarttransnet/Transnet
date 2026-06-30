@@ -25,9 +25,14 @@ internal sealed class UpdateInspectionChecklistCommandHandler(IApplicationDbCont
         checklist.IsActive = request.IsActive;
 
         // Update items
-        // Simplified: Remove all and add new ones (or keep track of IDs)
-        // Since we have optional IDs in the command, we could match them.
-        
+        // Remove items not in the request
+        var itemIdsToKeep = request.Items.Where(i => i.Id.HasValue).Select(i => i.Id!.Value).ToList();
+        var itemsToRemove = checklist.Items.Where(i => !itemIdsToKeep.Contains(i.Id)).ToList();
+        foreach (var item in itemsToRemove)
+        {
+            checklist.Items.Remove(item);
+        }
+
         foreach (var itemCommand in request.Items)
         {
              if (itemCommand.Id.HasValue)
@@ -65,14 +70,6 @@ internal sealed class UpdateInspectionChecklistCommandHandler(IApplicationDbCont
                      SortOrder = itemCommand.SortOrder
                  });
              }
-        }
-
-        // Remove items not in the request
-        var itemIdsToKeep = request.Items.Where(i => i.Id.HasValue).Select(i => i.Id!.Value).ToList();
-        var itemsToRemove = checklist.Items.Where(i => !itemIdsToKeep.Contains(i.Id) && i.Id != Guid.Empty).ToList();
-        foreach (var item in itemsToRemove)
-        {
-            checklist.Items.Remove(item);
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);

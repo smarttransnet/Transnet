@@ -24,6 +24,13 @@ public sealed class WorkOrder : Entity
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
+    public int? JobType { get; set; }
+    public string? DriverName { get; set; }
+    public string? PreparedBy { get; set; }
+    public string? CheckedByDriver { get; set; }
+    public string? CheckedByMechanic { get; set; }
+    public string? AuthorizedBy { get; set; }
+
     public Vehicle Vehicle { get; set; }
     public VehicleInspection? VehicleInspection { get; set; }
 

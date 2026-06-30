@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using MediatR;
-using Microsoft.AspNetCore.Http;
 using Application.Abstractions.Messaging;
+using Microsoft.AspNetCore.Http;
 using Application.Inspections.GetInspections;
 using SharedKernel;
 using Web.Api.Extensions;
@@ -17,12 +16,12 @@ internal sealed class Get : IEndpoint
             Guid? vehicleId,
             int? pageNumber,
             int? pageSize,
-            [FromServices] ISender sender,
+            [FromServices] IQueryHandler<GetInspectionsQuery, List<InspectionResponse>> handler,
             CancellationToken cancellationToken) =>
         {
             var query = new GetInspectionsQuery(vehicleId, pageNumber ?? 1, pageSize ?? 20);
             
-            Result<List<InspectionResponse>> result = await sender.Send(query, cancellationToken);
+            Result<List<InspectionResponse>> result = await handler.Handle(query, cancellationToken);
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })
