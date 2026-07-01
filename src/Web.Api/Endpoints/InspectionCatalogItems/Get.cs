@@ -1,21 +1,22 @@
 using Application.Abstractions.Messaging;
 using Application.InspectionCatalogItems.GetInspectionCatalogItems;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
+using SharedKernel;
+using Web.Api.Extensions;
+using Web.Api.Infrastructure;
 
 namespace Web.Api.Endpoints.InspectionCatalogItems;
 
-public sealed class Get : IEndpoint
+internal sealed class Get : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("inspection-catalog-items", async ([FromServices] IQueryHandler<GetInspectionCatalogItemsQuery, List<InspectionCatalogItemResponse>> handler, CancellationToken cancellationToken) =>
+        app.MapGet("inspection-catalog-items", async (
+            IQueryHandler<GetInspectionCatalogItemsQuery, List<InspectionCatalogItemResponse>> handler,
+            CancellationToken cancellationToken) =>
         {
             var query = new GetInspectionCatalogItemsQuery();
-            var result = await handler.Handle(query, cancellationToken);
-            return result.IsSuccess ? Results.Ok(result.Value) : Results.NotFound();
+            Result<List<InspectionCatalogItemResponse>> result = await handler.Handle(query, cancellationToken);
+            return result.Match(Results.Ok, CustomResults.Problem);
         })
         .WithTags(Tags.InspectionCatalogItems);
     }
