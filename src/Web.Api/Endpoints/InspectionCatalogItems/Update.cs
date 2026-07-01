@@ -1,13 +1,12 @@
-using Application.InspectionCatalogItems.UpdateInspectionCatalogItem;
 using Application.Abstractions.Messaging;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
+using Application.InspectionCatalogItems.UpdateInspectionCatalogItem;
+using SharedKernel;
+using Web.Api.Extensions;
+using Web.Api.Infrastructure;
 
 namespace Web.Api.Endpoints.InspectionCatalogItems;
 
-public sealed class Update : IEndpoint
+internal sealed class Update : IEndpoint
 {
     public sealed record Request(
         string Category,
@@ -17,7 +16,11 @@ public sealed class Update : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("inspection-catalog-items/{id:guid}", async (Guid id, Request request, [FromServices] ICommandHandler<UpdateInspectionCatalogItemCommand> handler, CancellationToken cancellationToken) =>
+        app.MapPut("inspection-catalog-items/{id:guid}", async (
+            Guid id, 
+            Request request, 
+            ICommandHandler<UpdateInspectionCatalogItemCommand> handler, 
+            CancellationToken cancellationToken) =>
         {
             var command = new UpdateInspectionCatalogItemCommand(
                 id,
@@ -26,8 +29,8 @@ public sealed class Update : IEndpoint
                 request.SortOrder,
                 request.IsActive);
                 
-            var result = await handler.Handle(command, cancellationToken);
-            return result.IsSuccess ? Results.NoContent() : Results.NotFound(result.Error);
+            Result result = await handler.Handle(command, cancellationToken);
+            return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .WithTags(Tags.InspectionCatalogItems);
     }

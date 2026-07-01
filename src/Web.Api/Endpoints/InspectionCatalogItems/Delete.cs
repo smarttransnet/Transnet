@@ -1,21 +1,23 @@
-using Application.InspectionCatalogItems.DeleteInspectionCatalogItem;
 using Application.Abstractions.Messaging;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
+using Application.InspectionCatalogItems.DeleteInspectionCatalogItem;
+using SharedKernel;
+using Web.Api.Extensions;
+using Web.Api.Infrastructure;
 
 namespace Web.Api.Endpoints.InspectionCatalogItems;
 
-public sealed class Delete : IEndpoint
+internal sealed class Delete : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapDelete("inspection-catalog-items/{id:guid}", async (Guid id, [FromServices] ICommandHandler<DeleteInspectionCatalogItemCommand> handler, CancellationToken cancellationToken) =>
+        app.MapDelete("inspection-catalog-items/{id:guid}", async (
+            Guid id, 
+            ICommandHandler<DeleteInspectionCatalogItemCommand> handler, 
+            CancellationToken cancellationToken) =>
         {
             var command = new DeleteInspectionCatalogItemCommand(id);
-            var result = await handler.Handle(command, cancellationToken);
-            return result.IsSuccess ? Results.NoContent() : Results.NotFound(result.Error);
+            Result result = await handler.Handle(command, cancellationToken);
+            return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .WithTags(Tags.InspectionCatalogItems);
     }
