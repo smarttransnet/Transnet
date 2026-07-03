@@ -13,34 +13,36 @@ namespace Web.Api.Endpoints.Trips;
 
 public sealed class TransitionTripStatus : IEndpoint
 {
+    public record TransitionTripStatusRequest(
+        TripStatus newStatus,
+        string? notes,
+        StatusChangeSource source,
+        Guid? changedByUserId,
+        Guid? changedByDriverId
+    );
+
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPut("trips/{id:guid}/status", async (
             Guid id, 
-            [FromForm] TripStatus newStatus,
-            [FromForm] string? notes,
-            [FromForm] StatusChangeSource source,
-            [FromForm] Guid? changedByUserId,
-            [FromForm] Guid? changedByDriverId,
-            IFormFile? photo,
+            [FromBody] TransitionTripStatusRequest request,
             ICommandHandler<TransitionTripStatusCommand> handler,
             CancellationToken cancellationToken) =>
         {
             var command = new TransitionTripStatusCommand(
                 id,
-                newStatus,
-                notes,
-                source,
-                changedByUserId,
-                changedByDriverId,
-                photo?.OpenReadStream(),
-                photo?.FileName);
+                request.newStatus,
+                request.notes,
+                request.source,
+                request.changedByUserId,
+                request.changedByDriverId,
+                null,
+                null);
 
             Result result = await handler.Handle(command, cancellationToken);
 
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
-        .DisableAntiforgery()
         .WithTags(Tags.Trips);
     }
 }
