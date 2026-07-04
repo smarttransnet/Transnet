@@ -12,9 +12,7 @@ namespace Application.TripCategories.DeleteTripCategory;
 public sealed record DeleteTripCategoryCommand(Guid Id) : ICommand;
 
 internal sealed class DeleteTripCategoryCommandHandler(
-    IApplicationDbContext dbContext,
-    IDateTimeProvider dateTimeProvider,
-    IUserContext userContext
+    IApplicationDbContext dbContext
 ) : ICommandHandler<DeleteTripCategoryCommand>
 {
     public async Task<Result> Handle(
@@ -32,10 +30,8 @@ internal sealed class DeleteTripCategoryCommandHandler(
             ));
         }
 
-        // Soft delete
-        mapping.IsActive = false;
-        mapping.ModifiedDate = dateTimeProvider.UtcNow;
-        mapping.ModifiedBy = userContext.UserId;
+        // Hard delete
+        dbContext.TripCategoryMaterials.Remove(mapping);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
