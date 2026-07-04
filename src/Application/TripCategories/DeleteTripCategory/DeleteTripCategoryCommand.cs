@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.TripCategories.DeleteTripCategory;
 
-public sealed record DeleteTripCategoryCommand(Guid Id) : ICommand;
+public sealed record DeleteTripCategoryCommand(Guid CategoryId) : ICommand;
 
 internal sealed class DeleteTripCategoryCommandHandler(
     IApplicationDbContext dbContext
@@ -19,19 +19,23 @@ internal sealed class DeleteTripCategoryCommandHandler(
         DeleteTripCategoryCommand request,
         CancellationToken cancellationToken
     ) {
-        var mapping = await dbContext.TripCategoryMaterials
-            .FirstOrDefaultAsync(cm => cm.Id == request.Id, cancellationToken);
+        var category = await dbContext.TripCategories
+            .Include(c => c.CategoryMaterials)
+            .FirstOrDefaultAsync(c => c.Id == request.CategoryId, cancellationToken);
 
-        if (mapping == null)
+        if (category == null)
         {
             return Result.Failure(Error.NotFound(
-                "TripCategoryMaterial.NotFound",
-                $"Trip category material mapping with ID '{request.Id}' was not found."
+                "TripCategory.NotFound",
+                $"Trip category with ID '{request.CategoryId}' was not found."
             ));
         }
 
-        // Hard delete
-        dbContext.TripCategoryMaterials.Remove(mapping);
+        // Hard delete mappings first
+        dbContext.TripCategoryMaterials.RemoveRange(category.CategoryMaterials);
+        
+        // Hard delete the category
+        dbContext.TripCategories.Remove(category);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

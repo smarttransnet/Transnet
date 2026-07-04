@@ -12,12 +12,10 @@ using System.Threading.Tasks;
 namespace Application.TripCategories.UpdateTripCategory;
 
 public sealed record UpdateTripCategoryCommand(
-    Guid Id,
-    Guid? CategoryId,
+    Guid CategoryId,
     string? CategoryName,
-    Guid? UomId,
-    string? NewUomCode,
-    string? NewUomDescription
+    List<Guid>? UomIds,
+    List<NewUomDto>? NewUoms
 ) : ICommand;
 
 internal sealed class UpdateTripCategoryCommandHandler(
@@ -30,143 +28,157 @@ internal sealed class UpdateTripCategoryCommandHandler(
         UpdateTripCategoryCommand request,
         CancellationToken cancellationToken
     ) {
-        var mapping = await dbContext.TripCategoryMaterials
-            .FirstOrDefaultAsync(cm => cm.Id == request.Id, cancellationToken);
+        // 1. Resolve TripCategory
+        var category = await dbContext.TripCategories
+            .Include(c => c.CategoryMaterials)
+            .FirstOrDefaultAsync(c => c.Id == request.CategoryId, cancellationToken);
 
-        if (mapping == null)
+        if (category == null)
         {
             return Result.Failure(Error.NotFound(
-                "TripCategoryMaterial.NotFound",
-                $"Trip category material mapping with ID '{request.Id}' was not found."
+                "TripCategory.NotFound",
+                $"Trip category with ID '{request.CategoryId}' was not found."
             ));
         }
 
         var now = dateTimeProvider.UtcNow;
         var userId = userContext.UserId;
 
-        // 1. Resolve TripCategory
-        TripCategory? category = null;
-        if (request.CategoryId.HasValue)
+        // Update category name if provided
+        if (!string.IsNullOrWhiteSpace(request.CategoryName))
         {
-            category = await dbContext.TripCategories
-                .FirstOrDefaultAsync(c => c.Id == request.CategoryId.Value, cancellationToken);
+            var newName = request.CategoryName.Trim();
+            // Ensure no other active category has this name
+            var duplicateName = await dbContext.TripCategories
+                .AnyAsync(c => c.Id != category.Id && c.CategoryName.ToLower() == newName.ToLower() && c.IsActive, cancellationToken);
             
-            if (category == null)
+            if (duplicateName)
             {
-                return Result.Failure(Error.NotFound(
-                    "TripCategory.NotFound",
-                    $"Trip category with ID '{request.CategoryId}' was not found."
+                return Result.Failure(Error.Conflict(
+                    "TripCategory.DuplicateName",
+                    $"Another active trip category with name '{newName}' already exists."
                 ));
             }
+
+            category.CategoryName = newName;
+            category.ModifiedDate = now;
+            category.ModifiedBy = userId;
         }
-        else if (!string.IsNullOrWhiteSpace(request.CategoryName))
+
+        // 2. Resolve UOMs
+        var targetUomIds = request.UomIds != null ? new List<Guid>(request.UomIds) : new List<Guid>();
+
+        if (request.NewUoms != null && request.NewUoms.Count > 0)
         {
-            var name = request.CategoryName.Trim();
-            category = await dbContext.TripCategories
-                .FirstOrDefaultAsync(c => c.CategoryName.ToLower() == name.ToLower(), cancellationToken);
-            
-            if (category == null)
+            foreach (var newUomDto in request.NewUoms)
             {
-                category = new TripCategory
+                if (string.IsNullOrWhiteSpace(newUomDto.Code))
+                {
+                    continue;
+                }
+                
+                var uomCode = newUomDto.Code.Trim().ToUpper();
+                var existingUom = await dbContext.Uoms
+                    .FirstOrDefaultAsync(u => u.UOMCode.ToUpper() == uomCode, cancellationToken);
+                
+                Guid resolvedNewUomId;
+                if (existingUom == null)
+                {
+                    var newUom = new Uom
+                    {
+                        Id = Guid.NewGuid(),
+                        UOMCode = uomCode,
+                        Description = newUomDto.Description?.Trim(),
+                        IsActive = true
+                    };
+                    dbContext.Uoms.Add(newUom);
+                    resolvedNewUomId = newUom.Id;
+                }
+                else
+                {
+                    resolvedNewUomId = existingUom.Id;
+                    if (!existingUom.IsActive)
+                    {
+                        existingUom.IsActive = true;
+                    }
+                }
+
+                if (!targetUomIds.Contains(resolvedNewUomId))
+                {
+                    targetUomIds.Add(resolvedNewUomId);
+                }
+            }
+        }
+
+        if (targetUomIds.Count == 0)
+        {
+            return Result.Failure(Error.Failure(
+                "TripCategory.UomRequired",
+                "At least one UOM is required."
+            ));
+        }
+
+        // Validate all existing UOMs (check database or Local context if newly added)
+        var allUomsFound = true;
+        foreach (var uomId in targetUomIds)
+        {
+            var exists = await dbContext.Uoms.AnyAsync(u => u.Id == uomId, cancellationToken) ||
+                         dbContext.Uoms.Local.Any(u => u.Id == uomId);
+            if (!exists)
+            {
+                allUomsFound = false;
+                break;
+            }
+        }
+
+        if (!allUomsFound)
+        {
+            return Result.Failure(Error.NotFound(
+                "UOM.NotFound",
+                "One or more provided UOM IDs do not exist."
+            ));
+        }
+
+        // 3. Reconcile CategoryMaterials
+        var existingMappings = category.CategoryMaterials.ToList();
+
+        // Deactivate mappings that are no longer in target list
+        foreach (var mapping in existingMappings)
+        {
+            if (!targetUomIds.Contains(mapping.UOMId) && mapping.IsActive)
+            {
+                mapping.IsActive = false;
+                mapping.ModifiedDate = now;
+                mapping.ModifiedBy = userId;
+            }
+        }
+
+        // Add or reactivate mappings that are in target list
+        foreach (var targetId in targetUomIds)
+        {
+            var existingMapping = existingMappings.FirstOrDefault(m => m.UOMId == targetId);
+            if (existingMapping == null)
+            {
+                // Create new
+                var newMapping = new TripCategoryMaterial
                 {
                     Id = Guid.NewGuid(),
-                    CategoryName = name,
+                    TripCategoryId = category.Id,
+                    UOMId = targetId,
                     IsActive = true,
                     CreatedDate = now,
                     CreatedBy = userId
                 };
-                dbContext.TripCategories.Add(category);
+                dbContext.TripCategoryMaterials.Add(newMapping);
             }
-            else if (!category.IsActive)
+            else if (!existingMapping.IsActive)
             {
-                category.IsActive = true;
-                category.ModifiedDate = now;
-                category.ModifiedBy = userId;
+                // Reactivate
+                existingMapping.IsActive = true;
+                existingMapping.ModifiedDate = now;
+                existingMapping.ModifiedBy = userId;
             }
         }
-
-        if (category == null)
-        {
-            return Result.Failure(Error.Failure(
-                "TripCategory.Required",
-                "Trip Category ID or Name is required."
-            ));
-        }
-
-        // 2. Resolve UOM
-        Guid resolvedUomId;
-        if (!string.IsNullOrWhiteSpace(request.NewUomCode))
-        {
-            var uomCode = request.NewUomCode.Trim().ToUpper();
-            var existingUom = await dbContext.Uoms
-                .FirstOrDefaultAsync(u => u.UOMCode.ToUpper() == uomCode, cancellationToken);
-            
-            if (existingUom == null)
-            {
-                var newUom = new Uom
-                {
-                    Id = Guid.NewGuid(),
-                    UOMCode = uomCode,
-                    Description = request.NewUomDescription?.Trim(),
-                    IsActive = true
-                };
-                dbContext.Uoms.Add(newUom);
-                resolvedUomId = newUom.Id;
-            }
-            else
-            {
-                resolvedUomId = existingUom.Id;
-                if (!existingUom.IsActive)
-                {
-                    existingUom.IsActive = true;
-                }
-            }
-        }
-        else
-        {
-            if (!request.UomId.HasValue)
-            {
-                return Result.Failure(Error.Failure(
-                    "TripCategoryMaterial.UomRequired",
-                    "UOM ID is required when not creating a new UOM."
-                ));
-            }
-            resolvedUomId = request.UomId.Value;
-
-            // Verify UOM exists
-            var uomExists = await dbContext.Uoms.AnyAsync(u => u.Id == resolvedUomId, cancellationToken);
-            if (!uomExists)
-            {
-                return Result.Failure(Error.NotFound(
-                    "UOM.NotFound",
-                    $"UOM with ID '{resolvedUomId}' was not found."
-                ));
-            }
-        }
-
-        // 3. Prevent duplicate combinations (excluding current mapping ID)
-        var duplicateExists = await dbContext.TripCategoryMaterials
-            .AnyAsync(cm => 
-                cm.Id != request.Id && 
-                cm.TripCategoryId == category.Id && 
-                cm.UOMId == resolvedUomId &&
-                cm.IsActive, 
-                cancellationToken
-            );
-
-        if (duplicateExists)
-        {
-            return Result.Failure(Error.Conflict(
-                "TripCategoryMaterial.Duplicate",
-                $"Another active mapping for Category '{category.CategoryName}' and this UOM already exists."
-            ));
-        }
-
-        // 4. Apply changes
-        mapping.TripCategoryId = category.Id;
-        mapping.UOMId = resolvedUomId;
-        mapping.ModifiedDate = now;
-        mapping.ModifiedBy = userId;
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

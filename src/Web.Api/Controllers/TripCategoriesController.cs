@@ -23,8 +23,8 @@ namespace Web.Api.Controllers;
 [ApiController]
 [Route("api/trip-categories")]
 public class TripCategoriesController(
-    IQueryHandler<GetTripCategoriesQuery, PagedList<TripCategoryMaterialResponse>> getTripCategoriesHandler,
-    IQueryHandler<GetTripCategoryByIdQuery, TripCategoryMaterialResponse> getTripCategoryByIdHandler,
+    IQueryHandler<GetTripCategoriesQuery, PagedList<TripCategoryResponse>> getTripCategoriesHandler,
+    IQueryHandler<GetTripCategoryByIdQuery, TripCategoryResponse> getTripCategoryByIdHandler,
     ICommandHandler<CreateTripCategoryCommand, List<Guid>> createTripCategoryHandler,
     ICommandHandler<UpdateTripCategoryCommand> updateTripCategoryHandler,
     ICommandHandler<DeleteTripCategoryCommand> deleteTripCategoryHandler,
@@ -72,11 +72,9 @@ public class TripCategoriesController(
     {
         var command = new UpdateTripCategoryCommand(
             id,
-            dto.CategoryId,
             dto.CategoryName,
-            dto.UomId,
-            dto.NewUomCode,
-            dto.NewUomDescription
+            dto.UomIds,
+            dto.NewUoms
         );
         var result = await updateTripCategoryHandler.Handle(command, cancellationToken);
         return result.IsSuccess ? NoContent() : BadRequest(result.Error);
@@ -116,7 +114,6 @@ public class UpdateTripCategoryRequestDto
     public Guid? CategoryId { get; set; }
     public string? CategoryName { get; set; }
 
-    public Guid? UomId { get; set; }
-    public string? NewUomCode { get; set; }
-    public string? NewUomDescription { get; set; }
+    public List<Guid>? UomIds { get; set; }
+    public List<NewUomDto>? NewUoms { get; set; }
 }
