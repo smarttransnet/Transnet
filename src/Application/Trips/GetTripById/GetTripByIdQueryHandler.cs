@@ -21,7 +21,7 @@ internal sealed class GetTripByIdQueryHandler : IQueryHandler<GetTripByIdQuery, 
         Trip? trip = await _context.Trips
 
             .Include(t => t.TripCategoryMaterial).ThenInclude(m => m!.TripCategory)
-            .Include(t => t.TripCategoryMaterial).ThenInclude(m => m!.Material)
+
             .Include(t => t.TripCategoryMaterial).ThenInclude(m => m!.Uom)
             .Include(t => t.StatusHistory)
             .AsNoTracking()
@@ -83,7 +83,7 @@ internal sealed class GetTripByIdQueryHandler : IQueryHandler<GetTripByIdQuery, 
             VehicleCategoryName: vehicleCategory,
             TripCategoryMaterialId: trip.TripCategoryMaterialId,
             CategoryName: trip.TripCategoryMaterial?.TripCategory?.CategoryName,
-            MaterialName: trip.TripCategoryMaterial?.Material?.MaterialName,
+
             UomCode: trip.TripCategoryMaterial?.Uom?.UOMCode,
             Quantity: trip.Quantity,
             ClientName: clientName,

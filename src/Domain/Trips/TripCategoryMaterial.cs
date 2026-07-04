@@ -6,7 +6,7 @@ public sealed class TripCategoryMaterial : Entity
 {
     public Guid Id { get; set; }
     public Guid TripCategoryId { get; set; }
-    public Guid MaterialId { get; set; }
+
     public Guid UOMId { get; set; }
     public bool IsActive { get; set; } = true;
     public DateTime CreatedDate { get; set; }
@@ -16,6 +16,6 @@ public sealed class TripCategoryMaterial : Entity
 
     // Navigation properties
     public TripCategory? TripCategory { get; set; }
-    public Material? Material { get; set; }
+
     public Uom? Uom { get; set; }
 }

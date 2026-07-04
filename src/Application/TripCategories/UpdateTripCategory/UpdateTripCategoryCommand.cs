@@ -15,8 +15,6 @@ public sealed record UpdateTripCategoryCommand(
     Guid Id,
     Guid? CategoryId,
     string? CategoryName,
-    Guid? MaterialId,
-    string? MaterialName,
     Guid? UomId,
     string? NewUomCode,
     string? NewUomDescription
@@ -95,65 +93,7 @@ internal sealed class UpdateTripCategoryCommandHandler(
             ));
         }
 
-        // 2. Resolve Material
-        Material? material = null;
-        if (request.MaterialId.HasValue)
-        {
-            material = await dbContext.Materials
-                .FirstOrDefaultAsync(m => m.Id == request.MaterialId.Value, cancellationToken);
-            
-            if (material == null)
-            {
-                return Result.Failure(Error.NotFound(
-                    "Material.NotFound",
-                    $"Material with ID '{request.MaterialId}' was not found."
-                ));
-            }
-
-            if (material.TripCategoryId != category.Id)
-            {
-                return Result.Failure(Error.Failure(
-                    "Material.CategoryMismatch",
-                    "The selected material does not belong to the selected trip category."
-                ));
-            }
-        }
-        else if (!string.IsNullOrWhiteSpace(request.MaterialName))
-        {
-            var name = request.MaterialName.Trim();
-            material = await dbContext.Materials
-                .FirstOrDefaultAsync(m => m.TripCategoryId == category.Id && m.MaterialName.ToLower() == name.ToLower(), cancellationToken);
-            
-            if (material == null)
-            {
-                material = new Material
-                {
-                    Id = Guid.NewGuid(),
-                    TripCategoryId = category.Id,
-                    MaterialName = name,
-                    IsActive = true,
-                    CreatedDate = now,
-                    CreatedBy = userId
-                };
-                dbContext.Materials.Add(material);
-            }
-            else if (!material.IsActive)
-            {
-                material.IsActive = true;
-                material.ModifiedDate = now;
-                material.ModifiedBy = userId;
-            }
-        }
-
-        if (material == null)
-        {
-            return Result.Failure(Error.Failure(
-                "Material.Required",
-                "Material ID or Name is required."
-            ));
-        }
-
-        // 3. Resolve UOM
+        // 2. Resolve UOM
         Guid resolvedUomId;
         if (!string.IsNullOrWhiteSpace(request.NewUomCode))
         {
@@ -204,12 +144,11 @@ internal sealed class UpdateTripCategoryCommandHandler(
             }
         }
 
-        // 4. Prevent duplicate combinations (excluding current mapping ID)
+        // 3. Prevent duplicate combinations (excluding current mapping ID)
         var duplicateExists = await dbContext.TripCategoryMaterials
             .AnyAsync(cm => 
                 cm.Id != request.Id && 
                 cm.TripCategoryId == category.Id && 
-                cm.MaterialId == material.Id && 
                 cm.UOMId == resolvedUomId &&
                 cm.IsActive, 
                 cancellationToken
@@ -219,13 +158,12 @@ internal sealed class UpdateTripCategoryCommandHandler(
         {
             return Result.Failure(Error.Conflict(
                 "TripCategoryMaterial.Duplicate",
-                $"Another active mapping for Category '{category.CategoryName}', Material '{material.MaterialName}', and this UOM already exists."
+                $"Another active mapping for Category '{category.CategoryName}' and this UOM already exists."
             ));
         }
 
-        // 5. Apply changes
+        // 4. Apply changes
         mapping.TripCategoryId = category.Id;
-        mapping.MaterialId = material.Id;
         mapping.UOMId = resolvedUomId;
         mapping.ModifiedDate = now;
         mapping.ModifiedBy = userId;

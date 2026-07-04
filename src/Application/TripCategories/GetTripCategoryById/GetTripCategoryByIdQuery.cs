@@ -19,7 +19,6 @@ internal sealed class GetTripCategoryByIdQueryHandler(IApplicationDbContext dbCo
     ) {
         var cm = await dbContext.TripCategoryMaterials
             .Include(cm => cm.TripCategory)
-            .Include(cm => cm.Material)
             .Include(cm => cm.Uom)
             .AsNoTracking()
             .SingleOrDefaultAsync(cm => cm.Id == request.Id, cancellationToken);
@@ -36,8 +35,6 @@ internal sealed class GetTripCategoryByIdQueryHandler(IApplicationDbContext dbCo
             cm.Id,
             cm.TripCategoryId,
             cm.TripCategory!.CategoryName,
-            cm.MaterialId,
-            cm.Material!.MaterialName,
             cm.UOMId,
             cm.Uom!.UOMCode,
             cm.IsActive

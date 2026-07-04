@@ -25,7 +25,7 @@ public sealed class TransitionTripStatus : IEndpoint
     {
         app.MapPut("trips/{id:guid}/status", async (
             Guid id, 
-            [FromBody] TransitionTripStatusRequest request,
+            TransitionTripStatusRequest request,
             ICommandHandler<TransitionTripStatusCommand> handler,
             CancellationToken cancellationToken) =>
         {

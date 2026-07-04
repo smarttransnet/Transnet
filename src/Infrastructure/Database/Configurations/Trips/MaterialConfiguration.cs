@@ -15,9 +15,5 @@ internal sealed class MaterialConfiguration : IEntityTypeConfiguration<Material>
         builder.Property(m => m.CreatedDate).IsRequired();
         builder.Property(m => m.CreatedBy).IsRequired();
 
-        builder.HasMany(m => m.CategoryMaterials)
-            .WithOne(cm => cm.Material)
-            .HasForeignKey(cm => cm.MaterialId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

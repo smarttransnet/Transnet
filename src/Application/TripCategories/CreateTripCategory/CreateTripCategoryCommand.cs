@@ -16,8 +16,6 @@ namespace Application.TripCategories.CreateTripCategory;
 public sealed record CreateTripCategoryCommand(
     Guid? CategoryId,
     string? CategoryName,
-    Guid? MaterialId,
-    string? MaterialName,
     List<Guid>? UomIds,
     string? NewUomCode,
     string? NewUomDescription
@@ -130,67 +128,7 @@ internal sealed class CreateTripCategoryCommandHandler(
             ));
         }
 
-        // 2. Resolve Material
-        Material? material = null;
-        if (request.MaterialId.HasValue)
-        {
-            material = await dbContext.Materials
-                .FirstOrDefaultAsync(m => m.Id == request.MaterialId.Value, cancellationToken);
-            
-            if (material == null)
-            {
-                return Result.Failure<List<Guid>>(Error.NotFound(
-                    "Material.NotFound",
-                    $"Material with ID '{request.MaterialId}' was not found."
-                ));
-            }
-
-            // Ensure the material belongs to this category
-            if (material.TripCategoryId != category.Id)
-            {
-                return Result.Failure<List<Guid>>(Error.Failure(
-                    "Material.CategoryMismatch",
-                    "The selected material does not belong to the selected trip category."
-                ));
-            }
-        }
-        else if (!string.IsNullOrWhiteSpace(request.MaterialName))
-        {
-            var name = request.MaterialName.Trim();
-            // Check if material already exists under this category case-insensitively
-            material = await dbContext.Materials
-                .FirstOrDefaultAsync(m => m.TripCategoryId == category.Id && m.MaterialName.ToLower() == name.ToLower(), cancellationToken);
-            
-            if (material == null)
-            {
-                material = new Material
-                {
-                    Id = Guid.NewGuid(),
-                    TripCategoryId = category.Id,
-                    MaterialName = name,
-                    IsActive = true,
-                    CreatedDate = now,
-                    CreatedBy = userId
-                };
-                dbContext.Materials.Add(material);
-            }
-            else if (!material.IsActive)
-            {
-                material.IsActive = true;
-                material.ModifiedDate = now;
-                material.ModifiedBy = userId;
-            }
-        }
-
-        if (material == null)
-        {
-            return Result.Failure<List<Guid>>(Error.Failure(
-                "Material.Required",
-                "Material ID or Name is required."
-            ));
-        }
-
-        // 3. Resolve mappings for each UOM
+        // 2. Resolve mappings for each UOM
         var createdIds = new List<Guid>();
         foreach (var uomId in uomIdsToMap)
         {
@@ -208,7 +146,6 @@ internal sealed class CreateTripCategoryCommandHandler(
             var existingMapping = await dbContext.TripCategoryMaterials
                 .FirstOrDefaultAsync(cm => 
                     cm.TripCategoryId == category.Id && 
-                    cm.MaterialId == material.Id && 
                     cm.UOMId == uomId, 
                     cancellationToken
                 );
@@ -220,7 +157,7 @@ internal sealed class CreateTripCategoryCommandHandler(
                     // Return failure for duplicate combinations
                     return Result.Failure<List<Guid>>(Error.Conflict(
                         "TripCategoryMaterial.Duplicate",
-                        $"The mapping for Category '{category.CategoryName}', Material '{material.MaterialName}', and selected UOM already exists."
+                        $"The mapping for Category '{category.CategoryName}' and selected UOM already exists."
                     ));
                 }
                 else
@@ -239,7 +176,6 @@ internal sealed class CreateTripCategoryCommandHandler(
                 {
                     Id = Guid.NewGuid(),
                     TripCategoryId = category.Id,
-                    MaterialId = material.Id,
                     UOMId = uomId,
                     IsActive = true,
                     CreatedDate = now,
