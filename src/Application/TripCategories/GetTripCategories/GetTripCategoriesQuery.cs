@@ -17,33 +17,33 @@ public sealed record GetTripCategoriesQuery(
     int PageSize = 10,
     string? SortBy = null,
     string? SortOrder = "asc"
-) : IQuery<PagedList<TripCategoryMaterialResponse>>;
+) : IQuery<PagedList<TripCategoryResponse>>;
 
 internal sealed class GetTripCategoriesQueryHandler(IApplicationDbContext dbContext)
-    : IQueryHandler<GetTripCategoriesQuery, PagedList<TripCategoryMaterialResponse>>
+    : IQueryHandler<GetTripCategoriesQuery, PagedList<TripCategoryResponse>>
 {
-    public async Task<Result<PagedList<TripCategoryMaterialResponse>>> Handle(
+    public async Task<Result<PagedList<TripCategoryResponse>>> Handle(
         GetTripCategoriesQuery request,
         CancellationToken cancellationToken
     ) {
-        var query = dbContext.TripCategoryMaterials
-            .Include(cm => cm.TripCategory)
-            .Include(cm => cm.Uom)
+        var query = dbContext.TripCategories
+            .Include(c => c.CategoryMaterials)
+                .ThenInclude(cm => cm.Uom)
             .AsNoTracking();
 
         // 1. Filter by Active status
         if (request.IsActive.HasValue)
         {
-            query = query.Where(cm => cm.IsActive == request.IsActive.Value);
+            query = query.Where(c => c.IsActive == request.IsActive.Value);
         }
 
         // 2. Filter by SearchTerm (Category, UOM Code)
         if (!string.IsNullOrWhiteSpace(request.SearchTerm))
         {
             var term = request.SearchTerm.Trim().ToLower();
-            query = query.Where(cm =>
-                cm.TripCategory!.CategoryName.ToLower().Contains(term) ||
-                cm.Uom!.UOMCode.ToLower().Contains(term)
+            query = query.Where(c =>
+                c.CategoryName.ToLower().Contains(term) ||
+                c.CategoryMaterials.Any(cm => cm.Uom != null && cm.Uom.UOMCode.ToLower().Contains(term))
             );
         }
 
@@ -53,20 +53,20 @@ internal sealed class GetTripCategoriesQueryHandler(IApplicationDbContext dbCont
 
         query = sortBy switch
         {
-            "category" => isDesc ? query.OrderByDescending(cm => cm.TripCategory!.CategoryName) : query.OrderBy(cm => cm.TripCategory!.CategoryName),
-            "uom" => isDesc ? query.OrderByDescending(cm => cm.Uom!.UOMCode) : query.OrderBy(cm => cm.Uom!.UOMCode),
-            "status" => isDesc ? query.OrderByDescending(cm => cm.IsActive) : query.OrderBy(cm => cm.IsActive),
-            _ => query.OrderBy(cm => cm.TripCategory!.CategoryName)
+            "category" => isDesc ? query.OrderByDescending(c => c.CategoryName) : query.OrderBy(c => c.CategoryName),
+            "status" => isDesc ? query.OrderByDescending(c => c.IsActive) : query.OrderBy(c => c.IsActive),
+            _ => query.OrderBy(c => c.CategoryName)
         };
 
         // 4. Map to response
-        var responseQuery = query.Select(cm => new TripCategoryMaterialResponse(
-            cm.Id,
-            cm.TripCategoryId,
-            cm.TripCategory!.CategoryName,
-            cm.UOMId,
-            cm.Uom!.UOMCode,
-            cm.IsActive
+        var responseQuery = query.Select(c => new TripCategoryResponse(
+            c.Id,
+            c.CategoryName,
+            c.IsActive,
+            c.CategoryMaterials
+                .Where(cm => cm.IsActive && cm.Uom != null)
+                .Select(cm => new UomDto(cm.Id, cm.UOMId, cm.Uom!.UOMCode, cm.Uom!.Description ?? string.Empty))
+                .ToList()
         ));
 
         // 5. Paginate using ToPagedListAsync extension
