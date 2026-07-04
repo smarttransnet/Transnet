@@ -58,32 +58,31 @@ public static class MigrationExtensions
             return;
         }
 
-        var seedData = new (string Category, string Material, string UOM)[]
+        var seedData = new (string Category, string UOM)[]
         {
-            ("Sewage Water", "Treated Water", "GL"),
-            ("Sewage Water", "Treated Water", "KL"),
-            ("Concrete Works", "Ready Mix Concrete", "CBM"),
-            ("Concrete Works", "Cement", "BAG"),
-            ("Road Works", "Aggregate", "TON"),
-            ("Road Works", "Crusher Run", "CBM"),
-            ("Earth Works", "Fill Material", "LOAD"),
-            ("Earth Works", "Excavation", "CBM"),
-            ("Plumbing", "PVC Pipe", "M"),
-            ("Plumbing", "Pipe Fittings", "PCS"),
-            ("Electrical", "Cable", "M"),
-            ("Electrical", "Junction Box", "EA"),
-            ("Steel Works", "Reinforcement Bars", "TON"),
-            ("Steel Works", "Rebar", "BDL"),
-            ("Fuel Supply", "Diesel", "L"),
-            ("Fuel Supply", "Diesel", "GL"),
-            ("Equipment Rental", "Excavator", "HR"),
-            ("Equipment Rental", "Excavator", "DAY"),
-            ("Transportation", "Water Delivery", "TRIP"),
-            ("Transportation", "Sand Delivery", "LOAD")
+            ("Sewage Water", "GL"),
+            ("Sewage Water", "KL"),
+            ("Concrete Works", "CBM"),
+            ("Concrete Works", "BAG"),
+            ("Road Works", "TON"),
+            ("Road Works", "CBM"),
+            ("Earth Works", "LOAD"),
+            ("Earth Works", "CBM"),
+            ("Plumbing", "M"),
+            ("Plumbing", "PCS"),
+            ("Electrical", "M"),
+            ("Electrical", "EA"),
+            ("Steel Works", "TON"),
+            ("Steel Works", "BDL"),
+            ("Fuel Supply", "L"),
+            ("Fuel Supply", "GL"),
+            ("Equipment Rental", "HR"),
+            ("Equipment Rental", "DAY"),
+            ("Transportation", "TRIP"),
+            ("Transportation", "LOAD")
         };
 
         var categories = new Dictionary<string, TripCategory>();
-        var materials = new Dictionary<(string Category, string Material), Material>();
         var uoms = new Dictionary<string, Uom>();
 
         var systemUserId = Guid.Parse("00000000-0000-0000-0000-000000000001");
@@ -106,22 +105,7 @@ public static class MigrationExtensions
                 dbContext.TripCategories.Add(category);
             }
 
-            // 2. Get or Create Material
-            var materialKey = (item.Category, item.Material);
-            if (!materials.TryGetValue(materialKey, out var material))
-            {
-                material = new Material
-                {
-                    Id = Guid.NewGuid(),
-                    TripCategoryId = category.Id,
-                    MaterialName = item.Material,
-                    IsActive = true,
-                    CreatedDate = now,
-                    CreatedBy = systemUserId
-                };
-                materials[materialKey] = material;
-                dbContext.Materials.Add(material);
-            }
+
 
             // 3. Get or Create UOM
             if (!uoms.TryGetValue(item.UOM, out var uom))
