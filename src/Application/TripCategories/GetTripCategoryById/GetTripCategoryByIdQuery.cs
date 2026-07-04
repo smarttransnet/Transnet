@@ -6,38 +6,41 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Application.TripCategories.GetTripCategories;
+
 namespace Application.TripCategories.GetTripCategoryById;
 
-public sealed record GetTripCategoryByIdQuery(Guid Id) : IQuery<TripCategoryMaterialResponse>;
+public sealed record GetTripCategoryByIdQuery(Guid Id) : IQuery<TripCategoryResponse>;
 
 internal sealed class GetTripCategoryByIdQueryHandler(IApplicationDbContext dbContext)
-    : IQueryHandler<GetTripCategoryByIdQuery, TripCategoryMaterialResponse>
+    : IQueryHandler<GetTripCategoryByIdQuery, TripCategoryResponse>
 {
-    public async Task<Result<TripCategoryMaterialResponse>> Handle(
+    public async Task<Result<TripCategoryResponse>> Handle(
         GetTripCategoryByIdQuery request,
         CancellationToken cancellationToken
     ) {
-        var cm = await dbContext.TripCategoryMaterials
-            .Include(cm => cm.TripCategory)
-            .Include(cm => cm.Uom)
+        var c = await dbContext.TripCategories
+            .Include(c => c.CategoryMaterials)
+                .ThenInclude(cm => cm.Uom)
             .AsNoTracking()
-            .SingleOrDefaultAsync(cm => cm.Id == request.Id, cancellationToken);
+            .SingleOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
 
-        if (cm is null)
+        if (c is null)
         {
-            return Result.Failure<TripCategoryMaterialResponse>(Error.NotFound(
-                "TripCategoryMaterial.NotFound",
-                $"The trip category material mapping with ID '{request.Id}' was not found."
+            return Result.Failure<TripCategoryResponse>(Error.NotFound(
+                "TripCategory.NotFound",
+                $"The trip category with ID '{request.Id}' was not found."
             ));
         }
 
-        return new TripCategoryMaterialResponse(
-            cm.Id,
-            cm.TripCategoryId,
-            cm.TripCategory!.CategoryName,
-            cm.UOMId,
-            cm.Uom!.UOMCode,
-            cm.IsActive
+        return new TripCategoryResponse(
+            c.Id,
+            c.CategoryName,
+            c.IsActive,
+            c.CategoryMaterials
+                .Where(cm => cm.IsActive && cm.Uom != null)
+                .Select(cm => new UomDto(cm.Id, cm.UOMId, cm.Uom!.UOMCode, cm.Uom!.Description ?? string.Empty))
+                .ToList()
         );
     }
 }

@@ -17,8 +17,7 @@ public sealed record CreateTripCategoryCommand(
     Guid? CategoryId,
     string? CategoryName,
     List<Guid>? UomIds,
-    string? NewUomCode,
-    string? NewUomDescription
+    List<NewUomDto>? NewUoms
 ) : ICommand<List<Guid>>;
 
 internal sealed class CreateTripCategoryCommandHandler(
@@ -34,40 +33,49 @@ internal sealed class CreateTripCategoryCommandHandler(
         var now = dateTimeProvider.UtcNow;
         var userId = userContext.UserId;
 
-        // 0. Resolve/create New Uom if provided
-        Guid? newCreatedUomId = null;
-        if (!string.IsNullOrWhiteSpace(request.NewUomCode))
+        // 0. Resolve/create New Uoms if provided
+        var uomIdsToMap = request.UomIds != null ? new List<Guid>(request.UomIds) : new List<Guid>();
+
+        if (request.NewUoms != null && request.NewUoms.Count > 0)
         {
-            var uomCode = request.NewUomCode.Trim().ToUpper();
-            var existingUom = await dbContext.Uoms
-                .FirstOrDefaultAsync(u => u.UOMCode.ToUpper() == uomCode, cancellationToken);
-            
-            if (existingUom == null)
+            foreach (var newUomDto in request.NewUoms)
             {
-                var newUom = new Uom
+                if (string.IsNullOrWhiteSpace(newUomDto.Code))
                 {
-                    Id = Guid.NewGuid(),
-                    UOMCode = uomCode,
-                    Description = request.NewUomDescription?.Trim(),
-                    IsActive = true
-                };
-                dbContext.Uoms.Add(newUom);
-                newCreatedUomId = newUom.Id;
-            }
-            else
-            {
-                newCreatedUomId = existingUom.Id;
-                if (!existingUom.IsActive)
+                    continue;
+                }
+                
+                var uomCode = newUomDto.Code.Trim().ToUpper();
+                var existingUom = await dbContext.Uoms
+                    .FirstOrDefaultAsync(u => u.UOMCode.ToUpper() == uomCode, cancellationToken);
+                
+                Guid resolvedId;
+                if (existingUom == null)
                 {
-                    existingUom.IsActive = true;
+                    var newUomEntity = new Uom
+                    {
+                        Id = Guid.NewGuid(),
+                        UOMCode = uomCode,
+                        Description = newUomDto.Description?.Trim(),
+                        IsActive = true
+                    };
+                    dbContext.Uoms.Add(newUomEntity);
+                    resolvedId = newUomEntity.Id;
+                }
+                else
+                {
+                    resolvedId = existingUom.Id;
+                    if (!existingUom.IsActive)
+                    {
+                        existingUom.IsActive = true;
+                    }
+                }
+
+                if (!uomIdsToMap.Contains(resolvedId))
+                {
+                    uomIdsToMap.Add(resolvedId);
                 }
             }
-        }
-
-        var uomIdsToMap = request.UomIds != null ? new List<Guid>(request.UomIds) : new List<Guid>();
-        if (newCreatedUomId.HasValue && !uomIdsToMap.Contains(newCreatedUomId.Value))
-        {
-            uomIdsToMap.Add(newCreatedUomId.Value);
         }
 
         if (!uomIdsToMap.Any())
@@ -132,8 +140,9 @@ internal sealed class CreateTripCategoryCommandHandler(
         var createdIds = new List<Guid>();
         foreach (var uomId in uomIdsToMap)
         {
-            // Verify UOM exists
-            var uomExists = await dbContext.Uoms.AnyAsync(u => u.Id == uomId, cancellationToken);
+            // Verify UOM exists (or was just added locally in the DbContext)
+            var uomExists = await dbContext.Uoms.AnyAsync(u => u.Id == uomId, cancellationToken) ||
+                            dbContext.Uoms.Local.Any(u => u.Id == uomId);
             if (!uomExists)
             {
                 return Result.Failure<List<Guid>>(Error.NotFound(
