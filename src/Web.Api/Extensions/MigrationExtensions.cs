@@ -146,7 +146,7 @@ public static class MigrationExtensions
             {
                 Id = Guid.NewGuid(),
                 TripCategoryId = category.Id,
-                MaterialId = material.Id,
+
                 UOMId = uom.Id,
                 IsActive = true,
                 CreatedDate = now,

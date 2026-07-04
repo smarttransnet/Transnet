@@ -29,7 +29,6 @@ public class TripCategoriesController(
     ICommandHandler<UpdateTripCategoryCommand> updateTripCategoryHandler,
     ICommandHandler<DeleteTripCategoryCommand> deleteTripCategoryHandler,
     IQueryHandler<GetTripCategoriesLookupQuery, List<TripCategoryLookupResponse>> getTripCategoriesLookupHandler,
-    IQueryHandler<GetMaterialsLookupQuery, List<MaterialLookupResponse>> getMaterialsLookupHandler,
     IQueryHandler<GetUomsLookupQuery, List<UomLookupResponse>> getUomsLookupHandler
 ) : ControllerBase
 {
@@ -75,8 +74,6 @@ public class TripCategoriesController(
             id,
             dto.CategoryId,
             dto.CategoryName,
-            dto.MaterialId,
-            dto.MaterialName,
             dto.UomId,
             dto.NewUomCode,
             dto.NewUomDescription
@@ -103,16 +100,7 @@ public class TripCategoriesController(
         return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
     }
 
-    [HttpGet("materials")]
-    public async Task<IActionResult> GetMaterialsLookup(
-        [FromQuery] Guid? tripCategoryId,
-        [FromQuery] bool? isActive,
-        CancellationToken cancellationToken
-    ) {
-        var query = new GetMaterialsLookupQuery(tripCategoryId, isActive);
-        var result = await getMaterialsLookupHandler.Handle(query, cancellationToken);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
-    }
+
 
     [HttpGet("uoms")]
     public async Task<IActionResult> GetUomsLookup([FromQuery] bool? isActive, CancellationToken cancellationToken)
@@ -127,8 +115,7 @@ public class UpdateTripCategoryRequestDto
 {
     public Guid? CategoryId { get; set; }
     public string? CategoryName { get; set; }
-    public Guid? MaterialId { get; set; }
-    public string? MaterialName { get; set; }
+
     public Guid? UomId { get; set; }
     public string? NewUomCode { get; set; }
     public string? NewUomDescription { get; set; }

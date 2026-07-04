@@ -15,7 +15,7 @@ internal sealed class TripCategoryMaterialConfiguration : IEntityTypeConfigurati
         builder.Property(cm => cm.CreatedBy).IsRequired();
 
         // Unique constraint for active mapping
-        builder.HasIndex(cm => new { cm.TripCategoryId, cm.MaterialId, cm.UOMId })
+        builder.HasIndex(cm => new { cm.TripCategoryId, cm.UOMId })
             .IsUnique()
             .HasFilter("is_active = true");
     }

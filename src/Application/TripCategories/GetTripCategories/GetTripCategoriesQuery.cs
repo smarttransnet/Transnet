@@ -28,7 +28,6 @@ internal sealed class GetTripCategoriesQueryHandler(IApplicationDbContext dbCont
     ) {
         var query = dbContext.TripCategoryMaterials
             .Include(cm => cm.TripCategory)
-            .Include(cm => cm.Material)
             .Include(cm => cm.Uom)
             .AsNoTracking();
 
@@ -38,13 +37,12 @@ internal sealed class GetTripCategoriesQueryHandler(IApplicationDbContext dbCont
             query = query.Where(cm => cm.IsActive == request.IsActive.Value);
         }
 
-        // 2. Filter by SearchTerm (Category, Material, UOM Code)
+        // 2. Filter by SearchTerm (Category, UOM Code)
         if (!string.IsNullOrWhiteSpace(request.SearchTerm))
         {
             var term = request.SearchTerm.Trim().ToLower();
             query = query.Where(cm =>
                 cm.TripCategory!.CategoryName.ToLower().Contains(term) ||
-                cm.Material!.MaterialName.ToLower().Contains(term) ||
                 cm.Uom!.UOMCode.ToLower().Contains(term)
             );
         }
@@ -56,7 +54,6 @@ internal sealed class GetTripCategoriesQueryHandler(IApplicationDbContext dbCont
         query = sortBy switch
         {
             "category" => isDesc ? query.OrderByDescending(cm => cm.TripCategory!.CategoryName) : query.OrderBy(cm => cm.TripCategory!.CategoryName),
-            "material" => isDesc ? query.OrderByDescending(cm => cm.Material!.MaterialName) : query.OrderBy(cm => cm.Material!.MaterialName),
             "uom" => isDesc ? query.OrderByDescending(cm => cm.Uom!.UOMCode) : query.OrderBy(cm => cm.Uom!.UOMCode),
             "status" => isDesc ? query.OrderByDescending(cm => cm.IsActive) : query.OrderBy(cm => cm.IsActive),
             _ => query.OrderBy(cm => cm.TripCategory!.CategoryName)
@@ -67,8 +64,6 @@ internal sealed class GetTripCategoriesQueryHandler(IApplicationDbContext dbCont
             cm.Id,
             cm.TripCategoryId,
             cm.TripCategory!.CategoryName,
-            cm.MaterialId,
-            cm.Material!.MaterialName,
             cm.UOMId,
             cm.Uom!.UOMCode,
             cm.IsActive

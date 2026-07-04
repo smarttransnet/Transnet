@@ -44,7 +44,7 @@ internal sealed class GetTripsQueryHandler(IApplicationDbContext dbContext)
                 null, // VehicleCategoryName
                 t.TripCategoryMaterialId, // TripCategoryMaterialId
                 t.TripCategoryMaterial != null && t.TripCategoryMaterial.TripCategory != null ? t.TripCategoryMaterial.TripCategory.CategoryName : null, // CategoryName
-                t.TripCategoryMaterial != null && t.TripCategoryMaterial.Material != null ? t.TripCategoryMaterial.Material.MaterialName : null, // MaterialName
+
                 t.TripCategoryMaterial != null && t.TripCategoryMaterial.Uom != null ? t.TripCategoryMaterial.Uom.UOMCode : null, // UomCode
                 t.Quantity)) // Quantity
             .ToListAsync(cancellationToken);

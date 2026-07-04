@@ -15,5 +15,5 @@ public sealed class Material : Entity
 
     // Navigation properties
     public TripCategory? TripCategory { get; set; }
-    public ICollection<TripCategoryMaterial> CategoryMaterials { get; set; } = [];
+
 }

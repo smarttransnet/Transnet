@@ -32,7 +32,7 @@ public sealed record TripResponse(
     string? VehicleCategoryName = null,
     Guid? TripCategoryMaterialId = null,
     string? CategoryName = null,
-    string? MaterialName = null,
+
     string? UomCode = null,
     decimal? Quantity = null,
     List<TripStatusHistoryResponse>? StatusHistory = null);
