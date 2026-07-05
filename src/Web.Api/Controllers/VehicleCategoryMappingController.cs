@@ -20,7 +20,7 @@ namespace Web.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/vehicle-category-mappings")]
-public class VehicleCategoryMappingsController(
+public class VehicleCategoryMappingController(
     IQueryHandler<GetVehicleCategoryMappingsQuery, PagedList<VehicleCategoryMappingResponse>> getMappingsHandler,
     IQueryHandler<GetVehicleCategoryMappingByIdQuery, VehicleCategoryMappingResponse> getMappingByIdHandler,
     ICommandHandler<CreateVehicleCategoryMappingCommand, List<Guid>> createMappingHandler,
