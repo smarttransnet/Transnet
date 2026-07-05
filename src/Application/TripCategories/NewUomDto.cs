@@ -1,3 +1,7 @@
 namespace Application.TripCategories;
 
-public record NewUomDto(string Code, string Description);
+public class NewUomDto
+{
+    public string Code { get; set; } = string.Empty;
+    public string? Description { get; set; }
+}
