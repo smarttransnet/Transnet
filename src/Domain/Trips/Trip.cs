@@ -26,11 +26,11 @@ public sealed class Trip : Entity
     public Guid? OfficeApprovedByUserId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
-    public Guid? TripCategoryMaterialId { get; set; }
+    public Guid? VehicleCategoryUomId { get; set; }
     public decimal? Quantity { get; set; }
 
     // Navigation Properties
     public Client? Client { get; set; }
-    public TripCategoryMaterial? TripCategoryMaterial { get; set; }
+    public VehicleCategoryUom? VehicleCategoryUom { get; set; }
     public ICollection<TripStatusHistory> StatusHistory { get; set; } = new List<TripStatusHistory>();
 }

@@ -30,9 +30,8 @@ public sealed record TripResponse(
 
     string? VehiclePlateNumber = null,
     string? VehicleCategoryName = null,
-    Guid? TripCategoryMaterialId = null,
-    string? CategoryName = null,
 
     string? UomCode = null,
+    Guid? VehicleCategoryUomId = null,
     decimal? Quantity = null,
     List<TripStatusHistoryResponse>? StatusHistory = null);

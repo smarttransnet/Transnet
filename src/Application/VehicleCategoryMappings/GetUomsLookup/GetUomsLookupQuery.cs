@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Application.TripCategories.GetUomsLookup;
+namespace Application.VehicleCategoryMappings.GetUomsLookup;
 
 public sealed record UomLookupResponse(Guid Id, string UomCode, string? Description, bool IsActive);
 
