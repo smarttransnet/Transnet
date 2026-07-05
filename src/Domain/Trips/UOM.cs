@@ -10,5 +10,5 @@ public sealed class Uom : Entity
     public bool IsActive { get; set; } = true;
 
     // Navigation properties
-    public ICollection<TripCategoryMaterial> CategoryMaterials { get; set; } = [];
+    public ICollection<VehicleCategoryUom> VehicleCategoryUoms { get; set; } = [];
 }

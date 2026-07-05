@@ -14,15 +14,15 @@ internal sealed class CreateTripCommandHandler(
 {
     public async Task<Result<Guid>> Handle(CreateTripCommand request, CancellationToken cancellationToken)
     {
-        if (request.TripCategoryMaterialId.HasValue)
+        if (request.VehicleCategoryUomId.HasValue)
         {
-            var mappingExists = await dbContext.TripCategoryMaterials
-                .AnyAsync(m => m.Id == request.TripCategoryMaterialId.Value && m.IsActive, cancellationToken);
+            var mappingExists = await dbContext.VehicleCategoryUoms
+                .AnyAsync(m => m.Id == request.VehicleCategoryUomId.Value && m.IsActive, cancellationToken);
             if (!mappingExists)
             {
                 return Result.Failure<Guid>(Error.NotFound(
-                    "TripCategoryMaterial.NotFound",
-                    $"Trip category material mapping with ID '{request.TripCategoryMaterialId}' was not found."
+                    "VehicleCategoryUom.NotFound",
+                    $"Vehicle category UOM mapping with ID '{request.VehicleCategoryUomId}' was not found."
                 ));
             }
 
@@ -30,7 +30,7 @@ internal sealed class CreateTripCommandHandler(
             {
                 return Result.Failure<Guid>(Error.Problem(
                     "Trip.QuantityRequired",
-                    "Quantity is required and must be greater than 0 when Trip Category, Material, and UOM are selected."
+                    "Quantity is required and must be greater than 0 when Vehicle Category and UOM are selected."
                 ));
             }
         }
@@ -50,7 +50,7 @@ internal sealed class CreateTripCommandHandler(
             CreatedAt = dateTimeProvider.UtcNow,
             UpdatedAt = dateTimeProvider.UtcNow,
             IsImported = false,
-            TripCategoryMaterialId = request.TripCategoryMaterialId,
+            VehicleCategoryUomId = request.VehicleCategoryUomId,
             Quantity = request.Quantity
         };
 
