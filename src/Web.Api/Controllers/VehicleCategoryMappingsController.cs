@@ -61,7 +61,7 @@ public class VehicleCategoryMappingsController(
             return BadRequest(result.Error);
         }
         // Since we return a list of mapping IDs but the GetById is by CategoryId, 
-        // we can just return Ok or Created.
+        // we can just return Ok or Created..
         return Ok(result.Value);
     }
 
