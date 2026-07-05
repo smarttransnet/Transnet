@@ -1,4 +1,4 @@
-namespace Application.TripCategories;
+namespace Application.VehicleCategoryMappings;
 
 public class NewUomDto
 {

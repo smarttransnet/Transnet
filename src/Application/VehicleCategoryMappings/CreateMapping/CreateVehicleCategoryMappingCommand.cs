@@ -11,23 +11,22 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Application.TripCategories.CreateTripCategory;
+namespace Application.VehicleCategoryMappings.CreateMapping;
 
-public sealed record CreateTripCategoryCommand(
-    Guid? CategoryId,
-    string? CategoryName,
+public sealed record CreateVehicleCategoryMappingCommand(
+    Guid VehicleCategoryId,
     List<Guid>? UomIds,
     List<NewUomDto>? NewUoms
 ) : ICommand<List<Guid>>;
 
-internal sealed class CreateTripCategoryCommandHandler(
+internal sealed class CreateVehicleCategoryMappingCommandHandler(
     IApplicationDbContext dbContext,
     IDateTimeProvider dateTimeProvider,
     IUserContext userContext
-) : ICommandHandler<CreateTripCategoryCommand, List<Guid>>
+) : ICommandHandler<CreateVehicleCategoryMappingCommand, List<Guid>>
 {
     public async Task<Result<List<Guid>>> Handle(
-        CreateTripCategoryCommand request,
+        CreateVehicleCategoryMappingCommand request,
         CancellationToken cancellationToken
     ) {
         var now = dateTimeProvider.UtcNow;
@@ -81,58 +80,20 @@ internal sealed class CreateTripCategoryCommandHandler(
         if (!uomIdsToMap.Any())
         {
             return Result.Failure<List<Guid>>(Error.Failure(
-                "TripCategoryMaterial.UomRequired",
+                "VehicleCategoryUom.UomRequired",
                 "At least one UOM is required."
             ));
         }
 
-        // 1. Resolve TripCategory
-        TripCategory? category = null;
-        if (request.CategoryId.HasValue)
-        {
-            category = await dbContext.TripCategories
-                .FirstOrDefaultAsync(c => c.Id == request.CategoryId.Value, cancellationToken);
-            
-            if (category == null)
-            {
-                return Result.Failure<List<Guid>>(Error.NotFound(
-                    "TripCategory.NotFound",
-                    $"Trip category with ID '{request.CategoryId}' was not found."
-                ));
-            }
-        }
-        else if (!string.IsNullOrWhiteSpace(request.CategoryName))
-        {
-            var name = request.CategoryName.Trim();
-            // Check if name already exists case-insensitively
-            category = await dbContext.TripCategories
-                .FirstOrDefaultAsync(c => c.CategoryName.ToLower() == name.ToLower(), cancellationToken);
-            
-            if (category == null)
-            {
-                category = new TripCategory
-                {
-                    Id = Guid.NewGuid(),
-                    CategoryName = name,
-                    IsActive = true,
-                    CreatedDate = now,
-                    CreatedBy = userId
-                };
-                dbContext.TripCategories.Add(category);
-            }
-            else if (!category.IsActive)
-            {
-                category.IsActive = true;
-                category.ModifiedDate = now;
-                category.ModifiedBy = userId;
-            }
-        }
-
+        // 1. Resolve VehicleCategory
+        var category = await dbContext.VehicleCategories
+            .FirstOrDefaultAsync(c => c.Id == request.VehicleCategoryId, cancellationToken);
+        
         if (category == null)
         {
-            return Result.Failure<List<Guid>>(Error.Failure(
-                "TripCategory.Required",
-                "Trip Category ID or Name is required."
+            return Result.Failure<List<Guid>>(Error.NotFound(
+                "VehicleCategory.NotFound",
+                $"Vehicle category with ID '{request.VehicleCategoryId}' was not found."
             ));
         }
 
@@ -152,9 +113,9 @@ internal sealed class CreateTripCategoryCommandHandler(
             }
 
             // Check if mapping already exists
-            var existingMapping = await dbContext.TripCategoryMaterials
+            var existingMapping = await dbContext.VehicleCategoryUoms
                 .FirstOrDefaultAsync(cm => 
-                    cm.TripCategoryId == category.Id && 
+                    cm.VehicleCategoryId == category.Id && 
                     cm.UOMId == uomId, 
                     cancellationToken
                 );
@@ -165,8 +126,8 @@ internal sealed class CreateTripCategoryCommandHandler(
                 {
                     // Return failure for duplicate combinations
                     return Result.Failure<List<Guid>>(Error.Conflict(
-                        "TripCategoryMaterial.Duplicate",
-                        $"The mapping for Category '{category.CategoryName}' and selected UOM already exists."
+                        "VehicleCategoryUom.Duplicate",
+                        $"The mapping for Category '{category.Name}' and selected UOM already exists."
                     ));
                 }
                 else
@@ -181,16 +142,16 @@ internal sealed class CreateTripCategoryCommandHandler(
             else
             {
                 // Create new mapping
-                var newMapping = new TripCategoryMaterial
+                var newMapping = new VehicleCategoryUom
                 {
                     Id = Guid.NewGuid(),
-                    TripCategoryId = category.Id,
+                    VehicleCategoryId = category.Id,
                     UOMId = uomId,
                     IsActive = true,
                     CreatedDate = now,
                     CreatedBy = userId
                 };
-                dbContext.TripCategoryMaterials.Add(newMapping);
+                dbContext.VehicleCategoryUoms.Add(newMapping);
                 createdIds.Add(newMapping.Id);
             }
         }

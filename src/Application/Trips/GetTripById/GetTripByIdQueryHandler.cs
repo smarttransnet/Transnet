@@ -20,9 +20,8 @@ internal sealed class GetTripByIdQueryHandler : IQueryHandler<GetTripByIdQuery, 
     {
         Trip? trip = await _context.Trips
 
-            .Include(t => t.TripCategoryMaterial).ThenInclude(m => m!.TripCategory)
-
-            .Include(t => t.TripCategoryMaterial).ThenInclude(m => m!.Uom)
+            .Include(t => t.VehicleCategoryUom).ThenInclude(m => m!.VehicleCategory)
+            .Include(t => t.VehicleCategoryUom).ThenInclude(m => m!.Uom)
             .Include(t => t.StatusHistory)
             .AsNoTracking()
             .FirstOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
@@ -81,10 +80,9 @@ internal sealed class GetTripByIdQueryHandler : IQueryHandler<GetTripByIdQuery, 
             VehicleRegistrationNumber: vehicleReg,
             VehiclePlateNumber: vehiclePlate,
             VehicleCategoryName: vehicleCategory,
-            TripCategoryMaterialId: trip.TripCategoryMaterialId,
-            CategoryName: trip.TripCategoryMaterial?.TripCategory?.CategoryName,
 
-            UomCode: trip.TripCategoryMaterial?.Uom?.UOMCode,
+            UomCode: trip.VehicleCategoryUom?.Uom?.UOMCode,
+            VehicleCategoryUomId: trip.VehicleCategoryUomId,
             Quantity: trip.Quantity,
             ClientName: clientName,
             ClientId: trip.ClientId,

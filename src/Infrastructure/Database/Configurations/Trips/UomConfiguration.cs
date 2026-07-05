@@ -15,7 +15,7 @@ internal sealed class UomConfiguration : IEntityTypeConfiguration<Uom>
         builder.Property(u => u.Description).HasMaxLength(250);
         builder.Property(u => u.IsActive).IsRequired().HasDefaultValue(true);
 
-        builder.HasMany(u => u.CategoryMaterials)
+        builder.HasMany(u => u.VehicleCategoryUoms)
             .WithOne(cm => cm.Uom)
             .HasForeignKey(cm => cm.UOMId)
             .OnDelete(DeleteBehavior.Cascade);

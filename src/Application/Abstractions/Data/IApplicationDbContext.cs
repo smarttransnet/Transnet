@@ -82,10 +82,8 @@ public interface IApplicationDbContext
     DbSet<DriverNotification> DriverNotifications { get; }
 
     // Trip Categories Module
-    DbSet<TripCategory> TripCategories { get; }
-    DbSet<Material> Materials { get; }
     DbSet<Uom> Uoms { get; }
-    DbSet<TripCategoryMaterial> TripCategoryMaterials { get; }
+    DbSet<VehicleCategoryUom> VehicleCategoryUoms { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

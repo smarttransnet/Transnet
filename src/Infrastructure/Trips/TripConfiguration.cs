@@ -40,12 +40,12 @@ internal sealed class TripConfiguration : IEntityTypeConfiguration<Trip>
 
 
 
-        builder.Property(t => t.TripCategoryMaterialId);
+        builder.Property(t => t.VehicleCategoryUomId);
         builder.Property(t => t.Quantity).HasPrecision(18, 2);
 
-        builder.HasOne(t => t.TripCategoryMaterial)
+        builder.HasOne(t => t.VehicleCategoryUom)
             .WithMany()
-            .HasForeignKey(t => t.TripCategoryMaterialId)
+            .HasForeignKey(t => t.VehicleCategoryUomId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

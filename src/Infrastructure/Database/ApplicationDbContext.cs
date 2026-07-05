@@ -89,10 +89,8 @@ public sealed class ApplicationDbContext(
     public DbSet<InvoiceReminderLog> InvoiceReminderLogs => Set<InvoiceReminderLog>();
 
     // Trip Categories Module
-    public DbSet<TripCategory> TripCategories { get; set; }
-    public DbSet<Material> Materials { get; set; }
     public DbSet<Uom> Uoms { get; set; }
-    public DbSet<TripCategoryMaterial> TripCategoryMaterials { get; set; }
+    public DbSet<VehicleCategoryUom> VehicleCategoryUoms { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
