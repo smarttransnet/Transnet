@@ -7,6 +7,7 @@ using Serilog;
 using Web.Api;
 using Web.Api.Extensions;
 
+// Triggering build pipeline for verification
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
