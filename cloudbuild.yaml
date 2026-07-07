@@ -8,7 +8,13 @@ steps:
       '.'
     ]
 
-  # Step 2: Deploy the container image to Cloud Run
+  # Step 2: PUSH the image to Artifact Registry immediately
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push', 'asia-southeast1-docker.pkg.dev/smart-trans-net/transnet-repo/transnet:$COMMIT_SHA'
+    ]
+
+  # Step 3: Deploy the container image to Cloud Run (Now it will find it!)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: [
