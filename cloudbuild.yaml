@@ -1,0 +1,25 @@
+steps:
+  # Step 1: Build the container image using the Dockerfile
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build', 
+      '-t', 'asia-southeast1-docker.pkg.dev/smart-trans-net/transnet-repo/transnet:$COMMIT_SHA', 
+      '-f', 'src/Web.Api/Dockerfile', 
+      '.'
+    ]
+
+  # Step 2: Deploy the container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: [
+      'run', 'deploy', 'transnet',
+      '--image', 'asia-southeast1-docker.pkg.dev/smart-trans-net/transnet-repo/transnet:$COMMIT_SHA',
+      '--region', 'asia-southeast1'
+    ]
+
+images:
+  - 'asia-southeast1-docker.pkg.dev/smart-trans-net/transnet-repo/transnet:$COMMIT_SHA'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  substitutionOption: ALLOW_LOOSE
