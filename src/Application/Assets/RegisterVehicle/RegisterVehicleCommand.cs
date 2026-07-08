@@ -4,8 +4,8 @@ using Domain.Assets.Enums;
 namespace Application.Assets.RegisterVehicle;
 
 public sealed record RegisterVehicleCommand(
-    string RegistrationNumber,
     string PlateNumber,
+    string ChassisNumber,
     string Make,
     string Model,
     int Year,

@@ -7,7 +7,7 @@ internal sealed class UpdateVehicleCommandValidator : AbstractValidator<UpdateVe
     public UpdateVehicleCommandValidator()
     {
         RuleFor(c => c.VehicleId).NotEmpty();
-        RuleFor(c => c.RegistrationNumber).NotEmpty().MaximumLength(50);
+        RuleFor(c => c.ChassisNumber).NotEmpty().MaximumLength(50);
         RuleFor(c => c.PlateNumber).NotEmpty().MaximumLength(50);
         RuleFor(c => c.Make).NotEmpty().MaximumLength(100);
         RuleFor(c => c.Model).NotEmpty().MaximumLength(100);

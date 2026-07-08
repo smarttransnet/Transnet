@@ -4,7 +4,7 @@ namespace Application.Reports.GetMaintenanceCosts;
 
 public sealed record MaintenanceCostResponse(
     Guid VehicleId,
-    string RegistrationNumber,
+    string ChassisNumber,
     int TotalWorkOrders,
     decimal TotalCostQAR);
 

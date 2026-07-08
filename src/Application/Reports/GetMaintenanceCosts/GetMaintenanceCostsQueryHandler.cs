@@ -16,7 +16,7 @@ internal sealed class GetMaintenanceCostsQueryHandler(IApplicationDbContext dbCo
             .GroupBy(wo => wo.Vehicle)
             .Select(g => new MaintenanceCostResponse(
                 g.Key.Id,
-                g.Key.RegistrationNumber,
+                g.Key.ChassisNumber,
                 g.Count(),
                 g.Sum(wo => wo.WorkOrderItems.Sum(i => i.TotalCostQAR))
             ))

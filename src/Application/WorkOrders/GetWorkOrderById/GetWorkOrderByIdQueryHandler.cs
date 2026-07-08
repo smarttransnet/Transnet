@@ -27,7 +27,7 @@ internal sealed class GetWorkOrderByIdQueryHandler(IApplicationDbContext dbConte
             entity.Id,
             entity.WorkOrderNumber,
             entity.VehicleId,
-            entity.Vehicle.RegistrationNumber,
+            entity.Vehicle.ChassisNumber,
             entity.VehicleInspectionId,
             entity.Title,
             entity.Description,

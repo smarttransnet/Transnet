@@ -22,7 +22,7 @@ internal sealed class GetWorkOrdersQueryHandler(IApplicationDbContext dbContext)
             wo.Id,
             wo.WorkOrderNumber,
             wo.VehicleId,
-            wo.Vehicle.RegistrationNumber,
+            wo.Vehicle.ChassisNumber,
             wo.VehicleInspectionId,
             wo.Title,
             wo.Description,

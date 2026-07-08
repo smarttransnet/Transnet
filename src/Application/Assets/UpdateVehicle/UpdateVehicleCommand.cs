@@ -5,8 +5,8 @@ namespace Application.Assets.UpdateVehicle;
 
 public sealed record UpdateVehicleCommand(
     Guid VehicleId,
-    string RegistrationNumber,
     string PlateNumber,
+    string ChassisNumber,
     string Make,
     string Model,
     int Year,

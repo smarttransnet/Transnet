@@ -21,8 +21,8 @@ internal sealed class UpdateVehicleCommandHandler(
             return Result.Failure(VehicleErrors.NotFound(request.VehicleId));
         }
 
-        vehicle.RegistrationNumber = request.RegistrationNumber;
         vehicle.PlateNumber = request.PlateNumber;
+        vehicle.ChassisNumber = request.ChassisNumber;
         vehicle.Make = request.Make;
         vehicle.Model = request.Model;
         vehicle.Year = request.Year;

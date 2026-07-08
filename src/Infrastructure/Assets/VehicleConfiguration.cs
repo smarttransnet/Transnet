@@ -10,8 +10,8 @@ internal sealed class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
     {
         builder.HasKey(v => v.Id);
         
-        builder.Property(v => v.RegistrationNumber).IsRequired().HasMaxLength(50);
         builder.Property(v => v.PlateNumber).IsRequired().HasMaxLength(50);
+        builder.Property(v => v.ChassisNumber).HasMaxLength(100);
         builder.Property(v => v.Make).IsRequired().HasMaxLength(100);
         builder.Property(v => v.Model).IsRequired().HasMaxLength(100);
         

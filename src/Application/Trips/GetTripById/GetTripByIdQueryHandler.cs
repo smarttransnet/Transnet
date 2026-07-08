@@ -40,10 +40,10 @@ internal sealed class GetTripByIdQueryHandler : IQueryHandler<GetTripByIdQuery, 
 
         var vehicle = await _context.Vehicles
             .Where(v => v.Id == trip.VehicleId)
-            .Select(v => new { v.RegistrationNumber, v.PlateNumber, CategoryName = v.Category.Name })
+            .Select(v => new { v.ChassisNumber, v.PlateNumber, CategoryName = v.Category.Name })
             .FirstOrDefaultAsync(cancellationToken);
 
-        string vehicleReg = vehicle?.RegistrationNumber ?? "Unknown Vehicle";
+        string vehicleChassis = vehicle?.ChassisNumber ?? "Unknown Vehicle";
         string vehiclePlate = vehicle?.PlateNumber ?? "Unknown Plate";
         string vehicleCategory = vehicle?.CategoryName ?? "Unknown Category";
 
@@ -77,7 +77,7 @@ internal sealed class GetTripByIdQueryHandler : IQueryHandler<GetTripByIdQuery, 
             CreatedAt: trip.CreatedAt,
             UpdatedAt: trip.UpdatedAt,
             DriverName: driverName,
-            VehicleRegistrationNumber: vehicleReg,
+            VehicleChassisNumber: vehicleChassis,
             VehiclePlateNumber: vehiclePlate,
             VehicleCategoryName: vehicleCategory,
 

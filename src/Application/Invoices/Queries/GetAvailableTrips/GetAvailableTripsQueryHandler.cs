@@ -49,7 +49,7 @@ internal sealed class GetAvailableTripsQueryHandler(
                 t.CreatedAt,
                 t.UpdatedAt,
                 null, // DriverName
-                null, // VehicleRegistrationNumber
+                null, // VehicleChassisNumber
                 null, // ClientName
                 null, // Stops not needed for the selection list
                 null, // Halts not needed

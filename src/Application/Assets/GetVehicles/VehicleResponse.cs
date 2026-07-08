@@ -4,8 +4,8 @@ namespace Application.Assets.GetVehicles;
 
 public sealed record VehicleResponse(
     Guid Id,
-    string RegistrationNumber,
     string PlateNumber,
+    string ChassisNumber,
     string Make,
     string Model,
     int Year,

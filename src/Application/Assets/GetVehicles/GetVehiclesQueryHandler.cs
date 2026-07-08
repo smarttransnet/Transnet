@@ -15,8 +15,8 @@ internal sealed class GetVehiclesQueryHandler(IApplicationDbContext dbContext)
             .AsNoTracking()
             .Select(v => new VehicleResponse(
                 v.Id,
-                v.RegistrationNumber,
                 v.PlateNumber,
+                v.ChassisNumber,
                 v.Make,
                 v.Model,
                 v.Year,
