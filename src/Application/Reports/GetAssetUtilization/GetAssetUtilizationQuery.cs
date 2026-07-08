@@ -4,7 +4,7 @@ namespace Application.Reports.GetAssetUtilization;
 
 public sealed record AssetUtilizationResponse(
     Guid VehicleId,
-    string RegistrationNumber,
+    string ChassisNumber,
     decimal TotalDistanceKm,
     int TotalTrips,
     int ActiveDays);

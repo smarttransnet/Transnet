@@ -29,7 +29,7 @@ internal sealed class GetInspectionsQueryHandler(IApplicationDbContext context)
             .Select(i => new InspectionResponse(
                 i.Id,
                 i.VehicleId,
-                i.Vehicle.RegistrationNumber,
+                i.Vehicle.ChassisNumber,
                 i.InspectionChecklist.Name,
                 i.InspectionType,
                 i.InspectedAt,

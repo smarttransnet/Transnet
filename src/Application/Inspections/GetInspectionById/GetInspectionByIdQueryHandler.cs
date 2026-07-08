@@ -40,7 +40,7 @@ internal sealed class GetInspectionByIdQueryHandler(IApplicationDbContext contex
         var response = new InspectionDetailedResponse(
             inspection.Id,
             inspection.VehicleId,
-            inspection.Vehicle.RegistrationNumber,
+            inspection.Vehicle.ChassisNumber,
             inspection.InspectionChecklistId,
             inspection.InspectionChecklist.Name,
             inspection.InspectionType,

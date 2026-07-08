@@ -15,8 +15,8 @@ internal sealed class RegisterVehicleCommandHandler(
         var vehicle = new Vehicle
         {
             Id = Guid.NewGuid(),
-            RegistrationNumber = request.RegistrationNumber,
             PlateNumber = request.PlateNumber,
+            ChassisNumber = request.ChassisNumber,
             Make = request.Make,
             Model = request.Model,
             Year = request.Year,

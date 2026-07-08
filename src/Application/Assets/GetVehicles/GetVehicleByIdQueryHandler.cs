@@ -16,8 +16,8 @@ internal sealed class GetVehicleByIdQueryHandler(IApplicationDbContext dbContext
             .Where(v => v.Id == request.VehicleId)
             .Select(v => new VehicleResponse(
                 v.Id,
-                v.RegistrationNumber,
                 v.PlateNumber,
+                v.ChassisNumber,
                 v.Make,
                 v.Model,
                 v.Year,

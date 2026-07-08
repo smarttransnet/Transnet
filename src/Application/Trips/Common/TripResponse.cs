@@ -23,7 +23,7 @@ public sealed record TripResponse(
     DateTime CreatedAt,
     DateTime UpdatedAt,
     string? DriverName = null,
-    string? VehicleRegistrationNumber = null,
+    string? VehicleChassisNumber = null,
     string? ClientName = null,
     Guid? ClientId = null,
     string? ResponseVersion = null,

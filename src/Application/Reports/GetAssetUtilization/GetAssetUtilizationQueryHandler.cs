@@ -16,7 +16,7 @@ internal sealed class GetAssetUtilizationQueryHandler(IApplicationDbContext dbCo
             .Where(v => v.IsActive)
             .Select(v => new AssetUtilizationResponse(
                 v.Id,
-                v.RegistrationNumber,
+                v.ChassisNumber,
                 v.OdometerReading * 0.1m, // Example mock data
                 5, // Example mock data for total trips
                 12 // Example mock data for active days

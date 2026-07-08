@@ -6,7 +6,7 @@ internal sealed class RegisterVehicleCommandValidator : AbstractValidator<Regist
 {
     public RegisterVehicleCommandValidator()
     {
-        RuleFor(c => c.RegistrationNumber).NotEmpty().MaximumLength(50);
+        RuleFor(x => x.ChassisNumber).NotEmpty().MaximumLength(50);
         RuleFor(c => c.PlateNumber).NotEmpty().MaximumLength(50);
         RuleFor(c => c.Make).NotEmpty().MaximumLength(100);
         RuleFor(c => c.Model).NotEmpty().MaximumLength(100);
