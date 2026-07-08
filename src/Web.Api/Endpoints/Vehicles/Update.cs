@@ -8,7 +8,7 @@ using Web.Api.Infrastructure;
 namespace Web.Api.Endpoints.Vehicles;
 
 public sealed record UpdateVehicleRequest(
-    string RegistrationNumber,
+    string ChassisNumber,
     string PlateNumber,
     string Make,
     string Model,
@@ -31,8 +31,8 @@ internal sealed class Update : IEndpoint
         {
             var command = new UpdateVehicleCommand(
                 id,
-                request.RegistrationNumber,
                 request.PlateNumber,
+                request.ChassisNumber,
                 request.Make,
                 request.Model,
                 request.Year,
